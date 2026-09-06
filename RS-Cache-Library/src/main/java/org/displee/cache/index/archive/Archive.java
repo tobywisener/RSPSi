@@ -543,12 +543,12 @@ public class Archive implements Container {
 
 	public byte[] readFile(String name){
 		File file = getFile(name);
-		return file.getData();
+		return file == null ? null : file.getData();
 	}
 
 	public byte[] readFile(int id){
-		File file = files[id];
-		return file.getData();
+		File file = getFile(id);
+		return file == null ? null : file.getData();
 	}
 	/**
 	 * Get the last file.

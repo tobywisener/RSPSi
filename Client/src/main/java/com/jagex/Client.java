@@ -1,8 +1,10 @@
 package com.jagex;
 
 import com.jagex.map.SceneGraph;
+import com.jagex.map.SceneTileData;
 import com.jagex.map.tile.SceneTile;
 import com.rspsi.options.KeyboardState;
+import com.rspsi.tools.BuildingGenerator.*;
 import javafx.scene.input.KeyCode;
 import org.displee.cache.index.archive.Archive;
 import org.displee.utilities.GZIPUtils;
@@ -14,9 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantLock;
@@ -48,6 +48,7 @@ import com.jagex.map.MapRegion;
 import com.jagex.net.ResourceProvider;
 import com.jagex.net.ResourceResponse;
 import com.jagex.util.Constants;
+import com.jagex.util.MultiMapEncoder;
 import com.jagex.util.ObjectKey;
 import com.jagex.util.TextRenderUtils;
 import com.rspsi.cache.CacheFileType;
@@ -70,6 +71,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+
+import static com.rspsi.misc.IntUtils.percentageOf;
 
 
 @Slf4j
@@ -586,12 +589,18 @@ public final class Client implements Runnable {
 	
 	private Chunk lastChunk;
 
+	private void resetChunkLoadState() {
+		chunks.clear();
+		pendingChunks.clear();
+		lastChunk = null;
+	}
+
 	public final void loadCoordinates(int wX, int wY, int chunkXLength, int chunkYLength) {
 		baseX = wX;
 		baseY = wY;
 
 		fullMapCanvas = new DisplayCanvas(chunkXLength * Options.mapRegionSize.get(), chunkYLength * Options.mapRegionSize.get(), false);
-		chunks.clear();
+		resetChunkLoadState();
 		
 		gameImageBuffer.initializeRasterizer();
 		gameImageBuffer.clear(0);
@@ -657,69 +666,320 @@ public final class Client implements Runnable {
 		loadState = LoadState.LOADING_MAP;
 		loadingStartTime = System.currentTimeMillis();
 	}
-	
-	public final void loadNew(int chunkXLength, int chunkYLength, int[][] heights) {
 
-		baseX = 0;
-		baseY = 0;
-		fullMapCanvas = new DisplayCanvas(chunkXLength * Options.mapRegionSize.get(), chunkYLength * Options.mapRegionSize.get(), false);
-		chunks.clear();
-		
-		gameImageBuffer.initializeRasterizer();
-		gameImageBuffer.clear(0);
-		TextRenderUtils.renderCenter(gameImageBuffer.getGraphics(), 
-				"Loading map, this may take a few seconds...", gameCanvas.getWidth() / 2, gameCanvas.getHeight() / 2 - 20, 0xFFFFFF);
-		// frameFont.renderCentre(256, 150, "Loading - please wait.", 0xffffff);
-		gameImageBuffer.finalize();
-		drawGameImage();
-		xCameraPos = 0;
-		yCameraPos = 0;
-		sceneGraph = new SceneGraph(64 * (chunkXLength), 64 * (chunkYLength), 4);
-		mapRegion = new MapRegion(sceneGraph, 64 * (chunkXLength), 64 * (chunkYLength));
-		mapRegion.tileHeights[0] = heights;
-		for(int x = 0;x<mapRegion.underlays[0].length;x++)
-			Arrays.fill(mapRegion.underlays[0][x], (byte)1);
-		for(int x = 0;x<mapRegion.manualTileHeight[0].length;x++)
-			Arrays.fill(mapRegion.manualTileHeight[0][x], (byte)1);
-		mapRegion.setHeights();
-		int fileId = 0;
-		for (int chunkX = 0; chunkX < chunkXLength; chunkX++) {
-			for (int chunkY = 0; chunkY < chunkYLength; chunkY++) {
-					anInt984 = 0;
-					int cX = 1000;
-					int cY = 1000;
-					int hash = (cX << 8) + cY;
-					Chunk chunk = new Chunk(hash);
-					chunk.offsetX = 64 * chunkX;
-					chunk.offsetY = 64 * chunkY;
-					chunk.setNewMap(true);
-					
-					chunk.tileMapId = fileId++;
-					chunk.objectMapId = fileId++;
-					
-					chunk.fillNamesFromIds();
+	// Returns a 2d array of overlay ids of the surrounding tiles for a given x and y
+	private byte[][] getSurroundingOverlayMatrix(int x, int y, int maxX, int maxY) {
+		byte offMap = (byte) -1;
 
-					chunk.init(this);
-					pendingChunks.add(chunk);
-			}
-		}
-		int width = (int) gameCanvas.getWidth();
-		int height = (int) gameCanvas.getHeight();
-		int[] ai = new int[64];
-		for (int i8 = 0; i8 < 64; i8++) {
-			int theta = i8 * 32 + 15;
-			int l8 = 600 + theta * 3;
-			int i9 = Constants.SINE[theta];
-			ai[i8] = l8 * i9 >> 16;
-		}
-		sceneGraph.method310(500, 800, width, height, ai);
-		loadState = LoadState.LOADING_MAP;
-		loadingStartTime = System.currentTimeMillis();
+		return new byte[][] {
+				new byte[] {
+						x > 0 && y < maxY ? (byte) mapRegion.overlays[0][x-1][y+1] : offMap,
+						y < maxY ? (byte) mapRegion.overlays[0][x][y+1] : offMap,
+						x < maxX && y < maxY ? (byte) mapRegion.overlays[0][x+1][y+1] : offMap
+				},
+				new byte[] {
+						x > 0 ? (byte) mapRegion.overlays[0][x-1][y] : offMap,
+						(byte) mapRegion.overlays[0][x][y],
+						x < maxX ? (byte) mapRegion.overlays[0][x+1][y] : offMap
+				},
+				new byte[] {
+						x > 0 && y > 0 ? (byte) mapRegion.overlays[0][x-1][y-1] : offMap,
+						y > 0 ? (byte) mapRegion.overlays[0][x][y-1] : offMap,
+						x < maxX && y > 0 ? (byte) mapRegion.overlays[0][x+1][y-1] : offMap
+				},
+		};
 	}
-	
+
+	private void setOverlayShapeForTile(int x, int y, int maxX, int maxY) {
+		byte shape = (byte) 0, orientation = (byte) 0;
+
+		byte offMap = (byte) -1; // Flag indicates this tile is out of map bounds
+
+		byte ground = (byte) 0;
+		byte water = (byte) 6;
+
+		// Create a grid of overlays around this square
+		byte[][] localOverlays = getSurroundingOverlayMatrix(x, y, maxX, maxY);
+
+		//68172.68859943567
+
+		byte diagonal = (byte) 1,
+		smallCorner = (byte) 8,
+		curved = (byte) 10,
+		mostlyGround = (byte) 11;
+
+
+		// Compare the overlay grid with pre defined grids
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, water, water},
+				new byte[]{ground, water, water},
+				new byte[]{ground, ground, ground}
+		})) {
+			shape = diagonal;
+			orientation = (byte) 2;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{water, ground, ground},
+				new byte[]{water, water, ground},
+				new byte[]{ground, water, water}
+		})) {
+			shape = curved;
+			orientation = (byte) 1;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{water, water, ground},
+				new byte[]{ground, water, water},
+				new byte[]{ground, ground, ground}
+		})) {
+			shape = curved;
+			orientation = (byte) 3;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, ground, water},
+				new byte[]{ground, water, water},
+				new byte[]{ground, water, water}
+		})) {
+			shape = curved;
+			orientation = (byte) 0;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, water, water},
+				new byte[]{ground, water, water},
+				new byte[]{ground, ground, water}
+		})) {
+			shape = diagonal;
+			orientation = (byte) 2;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{water, water, water},
+				new byte[]{ground, water, water},
+				new byte[]{ground, ground, water}
+		})) {
+			shape = diagonal;
+			orientation = (byte) 2;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{water, water, water},
+				new byte[]{water, water, ground},
+				new byte[]{ground, ground, ground}
+		})) {
+			shape = diagonal;
+			orientation = (byte) 1;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{water, water, water},
+				new byte[]{water, water, ground},
+				new byte[]{water, ground, ground}
+		})) {
+			shape = diagonal;
+			orientation = (byte) 1;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, ground, ground},
+				new byte[]{ground, water, ground},
+				new byte[]{ground, water, water}
+		})) {
+			shape = mostlyGround;
+			orientation = (byte) 0;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, water, ground},
+				new byte[]{ground, water, ground},
+				new byte[]{ground, ground, ground}
+		})) {
+			shape = mostlyGround;
+			orientation = (byte) 2;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, ground, ground},
+				new byte[]{ground, water, ground},
+				new byte[]{ground, water, ground}
+		})) {
+			shape = mostlyGround;
+			orientation = (byte) 0;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{water, water, ground},
+				new byte[]{water, water, ground},
+				new byte[]{ground, ground, ground}
+		})) {
+			shape = smallCorner;
+			orientation = (byte) 3;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{water, ground, ground},
+				new byte[]{water, water, ground},
+				new byte[]{water, water, ground}
+		})) {
+			shape = diagonal;
+			orientation = (byte) 0;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{water, ground, ground},
+				new byte[]{water, water, ground},
+				new byte[]{water, water, water}
+		})) {
+			shape = diagonal;
+			orientation = (byte) 0;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{water, water, ground},
+				new byte[]{water, water, ground},
+				new byte[]{water, ground, ground}
+		})) {
+			shape = diagonal;
+			orientation = (byte) 1;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, ground, ground},
+				new byte[]{water, water, ground},
+				new byte[]{water, water, water}
+		})) {
+			shape = curved;
+			orientation = (byte) 1;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, ground, ground},
+				new byte[]{water, water, ground},
+				new byte[]{water, water, ground}
+		})) {
+			shape = curved;
+			orientation = (byte) 0;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, ground, ground},
+				new byte[]{water, water, ground},
+				new byte[]{water, water, ground}
+		})) {
+			shape = curved;
+			orientation = (byte) 1;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{water, water, water},
+				new byte[]{ground, water, water},
+				new byte[]{ground, ground, ground}
+		})) {
+			shape = curved;
+			orientation = (byte) 3;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, ground, ground},
+				new byte[]{ground, water, water},
+				new byte[]{ground, water, water}
+		})) {
+			shape = curved;
+			orientation = (byte) 0;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, ground, ground},
+				new byte[]{ground, water, ground},
+				new byte[]{water, water, ground}
+		})) {
+			shape = mostlyGround;
+			orientation = (byte) 0;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, water, water},
+				new byte[]{ground, water, ground},
+				new byte[]{ground, ground, ground}
+		})) {
+			shape = mostlyGround;
+			orientation = (byte) 2;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{water, ground, ground},
+				new byte[]{water, water, ground},
+				new byte[]{ground, ground, ground}
+		})) {
+			shape = mostlyGround;
+			orientation = (byte) 1;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, ground, ground},
+				new byte[]{water, water, ground},
+				new byte[]{ground, ground, ground}
+		})) { //eh5
+			shape = mostlyGround;
+			orientation = (byte) 1;
+		}
+
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, ground, water},
+				new byte[]{ground, water, water},
+				new byte[]{ground, ground, ground}
+		})) {
+			shape = mostlyGround;
+			orientation = (byte) 3;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, ground, water},
+				new byte[]{ground, water, water},
+				new byte[]{water, water, water}
+		})) {
+			shape = diagonal;
+			orientation = (byte) 3;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, ground, ground},
+				new byte[]{ground, water, water},
+				new byte[]{water, water, water}
+		})) {
+			shape = diagonal;
+			orientation = (byte) 3;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{ground, ground, ground},
+				new byte[]{ground, water, ground},
+				new byte[]{water, water, water}
+		})) {
+			shape = mostlyGround;
+			orientation = (byte) 0;
+		}
+
+		if (Arrays.deepEquals(localOverlays, new byte[][]{
+				new byte[]{water, ground, ground},
+				new byte[]{water, water, ground},
+				new byte[]{water, ground, ground}
+		})) {
+			shape = mostlyGround;
+			orientation = (byte) 1;
+		}
+
+
+
+		mapRegion.overlayShapes[0][x][y] = shape;
+		mapRegion.overlayOrientations[0][x][y] = orientation;
+	}
 
 	public final void loadChunks(List<Chunk> chunks) {
-		this.chunks.clear();
+		resetChunkLoadState();
 
 		baseX = 0;
 		baseY = 0;
@@ -732,25 +992,41 @@ public final class Client implements Runnable {
 		drawGameImage();
 		xCameraPos = 0;
 		yCameraPos = 0;
-		int chunkXLength = 0;
-		int chunkYLength = 0;
-		for(Chunk chunk : chunks) {
-			int chunkX = chunk.offsetX / 64;
-			int chunkY = chunk.offsetY / 64;
-			
-			if(chunkX > chunkXLength)
-				chunkXLength = chunkX;
-			if(chunkY > chunkYLength)
-				chunkYLength = chunkY;
-			
-			
+		int minTileX = 0;
+		int minTileY = 0;
+		int maxTileX = 0;
+		int maxTileY = 0;
+		boolean firstChunk = true;
+		for (Chunk chunk : chunks) {
+			if (firstChunk) {
+				minTileX = maxTileX = chunk.offsetX;
+				minTileY = maxTileY = chunk.offsetY;
+				firstChunk = false;
+			} else {
+				if (chunk.offsetX < minTileX) {
+					minTileX = chunk.offsetX;
+				}
+				if (chunk.offsetY < minTileY) {
+					minTileY = chunk.offsetY;
+				}
+				if (chunk.offsetX > maxTileX) {
+					maxTileX = chunk.offsetX;
+				}
+				if (chunk.offsetY > maxTileY) {
+					maxTileY = chunk.offsetY;
+				}
+			}
 		}
-		chunkXLength += 1;
-		chunkYLength += 1;
+		baseX = minTileX;
+		baseY = minTileY;
+		int chunkXLength = Math.max(1, ((maxTileX - minTileX) / 64) + 1);
+		int chunkYLength = Math.max(1, ((maxTileY - minTileY) / 64) + 1);
 		sceneGraph = new SceneGraph(64 * (chunkXLength), 64 * (chunkYLength), 4);
 		mapRegion = new MapRegion(sceneGraph, 64 * (chunkXLength), 64 * (chunkYLength));
 		fullMapCanvas = new DisplayCanvas(chunkXLength * Options.mapRegionSize.get(), chunkYLength * Options.mapRegionSize.get(), false);
 		for(Chunk chunk : chunks) {
+			chunk.offsetX -= minTileX;
+			chunk.offsetY -= minTileY;
 			chunk.init(this);
 
 			chunk.fillNamesFromIds();
@@ -771,7 +1047,7 @@ public final class Client implements Runnable {
 	}
 
 	public final void loadFiles(byte[] landscapeBytes, byte[] objectBytes, int regionX, int regionY) {
-		chunks.clear();
+		resetChunkLoadState();
 
 		baseX = 0;
 		baseY = 0;
@@ -995,21 +1271,23 @@ public final class Client implements Runnable {
 		if (Options.showDebug.get()) {
 			int c = (int) gameCanvas.getWidth() - 20;
 			int k = 40;
+			/*
 			int i1 = 0xffff00;
 			if (fps < 15) {
 				i1 = 0xff0000;
-			}
+			}*/
+
 			if(this.getCurrentChunk() != null) {
 				Chunk chunk = this.getCurrentChunk();
-				k += TextRenderUtils.renderLeft(gameImageBuffer, "WorldX: " + (chunk.regionX * 64) + " WorldY: " + (chunk.regionY * 64), c, k, i1);
+				k += TextRenderUtils.renderLeft(gameImageBuffer, "WorldX: " + (chunk.regionX * 64) + " WorldY: " + (chunk.regionY * 64), c, k, 0xffff00);
 			}
-
+/*
 			k += TextRenderUtils.renderLeft(gameImageBuffer, "Fps: " + fps, c, k, i1);
 			Runtime runtime = Runtime.getRuntime();
 			int memory = (int) ((runtime.totalMemory() - runtime.freeMemory()) / 1024);
 			i1 = 0xffff00;
 			k += TextRenderUtils.renderLeft(gameImageBuffer, "Mem: " + memory / 1024 + "MB", c, k, 0xffff00);
-
+*/
 			k += TextRenderUtils.renderLeft(gameImageBuffer, "Chunk map files:  "  + getCurrentChunk().tileMapName + " " + getCurrentChunk().objectMapName + " ", c, k, 0xffff00);
 
 			k += TextRenderUtils.renderLeft(gameImageBuffer, "Mouse: " + mouseEventX + "," + mouseEventY + "", c, k, 0xffff00);
@@ -1027,6 +1305,7 @@ public final class Client implements Runnable {
 
 			k += TextRenderUtils.renderLeft(gameImageBuffer, "Hover UID: " + hoveredUID + "", c, k, 0xffff00);
 
+			/*
 			if(sceneGraph.tiles[Options.currentHeight.get()][sceneGraph.hoveredTileX][sceneGraph.hoveredTileY] != null) {
 				SceneTile tile = sceneGraph.tiles[Options.currentHeight.get()][sceneGraph.hoveredTileX][sceneGraph.hoveredTileY];
 				k += TextRenderUtils.renderLeft(gameImageBuffer, "Simple Data: " + (tile.simple != null ? tile.simple.toString() : "") , c, k, 0xffff00);
@@ -1054,6 +1333,8 @@ public final class Client implements Runnable {
 
 				k += TextRenderUtils.renderLeft(gameImageBuffer, "Pos: " + x + ", " + y, c, k,  0xffff00);
 			}
+
+ */
 
 		}
 	}
@@ -1146,7 +1427,6 @@ public final class Client implements Runnable {
 					sceneGraph.setChunk(chunk);
 					sceneGraph.renderScene(xCameraPos, yCameraPos, xCameraCurve, zCameraPos, currentPlane, yCameraCurve);
 					// xCameraPos, yCameraPos, xCameraCurve, zCameraPos, j, yCameraCurve
-
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -1286,14 +1566,31 @@ public final class Client implements Runnable {
 		SceneGraph.clearStates();
 		sceneGraph.reset();
 
-	
-		for (Chunk chunk : chunks) {
+		boolean loadFailed = false;
+		for (Chunk chunk : Lists.newArrayList(chunks)) {
 			try {
-				chunk.loadChunk();
+				chunk.loadTerrain();
 			} catch (Exception exception) {
 				exception.printStackTrace();
-				chunks.clear();
+				loadFailed = true;
+				break;
 			}
+		}
+		if (!loadFailed) {
+			for (Chunk chunk : Lists.newArrayList(chunks)) {
+				try {
+					chunk.loadObjects();
+				} catch (Exception exception) {
+					exception.printStackTrace();
+					loadFailed = true;
+					break;
+				}
+			}
+		}
+		if (loadFailed) {
+			chunks.clear();
+			loadState = LoadState.ERROR;
+			return;
 		}
 		mapRegion.method171(sceneGraph);
 
@@ -1568,6 +1865,17 @@ public final class Client implements Runnable {
 
 				SceneGraph.minimapUpdate = true;
 				System.out.println("UPDATED TILES");
+		});
+	}
+
+	public void forceMapUpdate() {
+		int positionX = xCameraPos;
+		int positionY = yCameraPos;
+		byte[] packData = MultiMapEncoder.encode(Lists.newArrayList(chunks));
+		runLater.add(() -> {
+			loadChunks(MultiMapEncoder.decode(packData));
+			xCameraPos = positionX;
+			yCameraPos = positionY;
 		});
 	}
 	

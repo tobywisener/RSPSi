@@ -10,7 +10,6 @@ import com.jagex.cache.loader.object.ObjectDefinitionLoader;
 import com.jagex.io.Buffer;
 import com.rspsi.misc.FixedHashMap;
 
-
 public class ObjectDefinitionLoaderOSRS extends ObjectDefinitionLoader {
 
 	private int count;
@@ -126,16 +125,17 @@ public class ObjectDefinitionLoaderOSRS extends ObjectDefinitionLoader {
 			} else if (opcode == 29) {
 				definition.setAmbientLighting(buffer.readByte());
 			} else if (opcode == 39) {
-				definition.setLightDiffusion((byte) (buffer.readByte() * 25));
-			} else if (opcode >= 30 && opcode < 35) {
-				String[] interactions = new String[5];
-				
-				interactions[opcode - 30] = buffer.readString();
-				if (interactions[opcode - 30].equalsIgnoreCase("Hidden")) {
-					interactions[opcode - 30] = null;
-				}
-				definition.setInteractions(interactions);
-			} else if (opcode == 40) {
+				definition.setLightDiffusion(buffer.readByte());
+				} else if (opcode >= 30 && opcode < 35) {
+					if (definition.getInteractions() == null) {
+						definition.setInteractions(new String[5]);
+					}
+					String[] interactions = definition.getInteractions();
+					interactions[opcode - 30] = buffer.readString();
+					if (interactions[opcode - 30].equalsIgnoreCase("hidden")) {
+						interactions[opcode - 30] = null;
+					}
+				} else if (opcode == 40) {
 				int count = buffer.readUByte();
 				int[] originalColours = new int[count];
 				int[] replacementColours = new int[count];
@@ -153,10 +153,12 @@ public class ObjectDefinitionLoaderOSRS extends ObjectDefinitionLoader {
 					originalTex[i] = buffer.readUShort();
 					replacementTex[i] = buffer.readUShort();
 				}
-				//definition.setRetextureToFind(originalTex);
-				//definition.setTextureToReplace(replacementTex);
+				definition.setRetextureToFind(originalTex);
+				definition.setTextureToReplace(replacementTex);
 			} else if (opcode == 60) {
 				definition.setMinimapFunction(buffer.readUShort());
+			} else if (opcode == 61) {
+				int fg = buffer.readUShort();
 			} else if (opcode == 62) {
 				definition.setInverted(true);
 			} else if (opcode == 64) {
@@ -215,17 +217,31 @@ public class ObjectDefinitionLoaderOSRS extends ObjectDefinitionLoader {
 				definition.setVarbit(varbit);
 				definition.setVarp(varp);
 			} else if(opcode == 78) {//TODO Figure out what these do in OSRS
-				//First short = ambient sound
-				buffer.skip(3);
+				int ambientSoundId = buffer.readUShort();
+				int anInt2083 = buffer.readUByte();
 			} else if(opcode == 79) {
-				buffer.skip(5);
-				int count = buffer.readByte();
-				buffer.skip(2 * count);
+				int anInt2112 = buffer.readUShort();
+				int anInt2113 = buffer.readUShort();
+				int anInt2083 = buffer.readUByte();
+
+				int length = buffer.readUByte();
+				int[] anims = new int[length];
+
+				for (int index = 0; index < length; ++index)
+				{
+					anims[index] = buffer.readUShort();
+				}
 			} else if(opcode == 81) {
-				buffer.skip(1);//Clip type?
+				int clipType = buffer.readUByte();
 			} else if (opcode == 82) {
-				buffer.readUShort();//AreaType
-				
+				int minimapFunction = buffer.readUShort();
+
+				if (minimapFunction == 0xFFFF) {
+					minimapFunction = -1;
+				}
+			} else if (opcode == 89) {
+				boolean randomAnimStart = false;
+
 			} else if(opcode == 249) {
 				int var1 = buffer.readUByte();
 				for(int var2 = 0;var2<var1;var2++) {

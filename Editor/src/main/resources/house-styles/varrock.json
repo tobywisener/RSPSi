@@ -1,0 +1,293 @@
+{
+  "id": "varrock_house_shell_v1",
+  "label": "Varrock House",
+  "source": {
+    "generator": "RSPSi Generate Building",
+    "houseType": "VARROCK"
+  },
+  "coordinateModel": {
+    "basis": "interior_floor_bbox",
+    "description": "All placement rules are expressed relative to the interior floor bbox selected for the building. Walls sit one tile outside that interior bbox. The roof is derived from the top inhabited floor."
+  },
+  "constraints": {
+    "minInteriorWidth": 3,
+    "minInteriorHeight": 3,
+    "maxFloors": 4,
+    "supportsRectangularOnly": true
+  },
+  "materials": {
+    "interiorFloorOverlayId": 22,
+    "interiorFloorOverlayShape": 1,
+    "interiorTileFlags": [
+      "FORCE_LOWEST_PLANE"
+    ]
+  },
+  "objects": {
+    "wall": {
+      "id": 23735,
+      "type": 0
+    },
+    "corner": {
+      "id": 23735,
+      "type": 1
+    },
+    "door": {
+      "id": 11775,
+      "type": 0
+    },
+    "roofEdge": {
+      "id": 15552
+    },
+    "roofTop": {
+      "id": 15552
+    }
+  },
+  "roles": {
+    "wallWest": {
+      "id": 23735,
+      "type": 0,
+      "orientation": 2
+    },
+    "wallEast": {
+      "id": 23735,
+      "type": 0,
+      "orientation": 0
+    },
+    "wallSouth": {
+      "id": 23735,
+      "type": 0,
+      "orientation": 1
+    },
+    "wallNorth": {
+      "id": 23735,
+      "type": 0,
+      "orientation": 3
+    },
+    "cornerSouthEast": {
+      "id": 23735,
+      "type": 1,
+      "orientation": 1
+    },
+    "cornerNorthEast": {
+      "id": 23735,
+      "type": 1,
+      "orientation": 2
+    },
+    "cornerNorthWest": {
+      "id": 23735,
+      "type": 1,
+      "orientation": 3
+    },
+    "cornerSouthWest": {
+      "id": 23735,
+      "type": 1,
+      "orientation": 0
+    },
+    "doorWestFacing": {
+      "id": 11775,
+      "type": 0,
+      "orientation": 2
+    },
+    "doorEastFacing": {
+      "id": 11775,
+      "type": 0,
+      "orientation": 0
+    },
+    "doorSouthFacing": {
+      "id": 11775,
+      "type": 0,
+      "orientation": 1
+    },
+    "doorNorthFacing": {
+      "id": 11775,
+      "type": 0,
+      "orientation": 3
+    },
+    "roofEdgeWest": {
+      "id": 15552,
+      "type": 18,
+      "orientation": 2
+    },
+    "roofEdgeEast": {
+      "id": 15552,
+      "type": 18,
+      "orientation": 0
+    },
+    "roofEdgeSouth": {
+      "id": 15552,
+      "type": 18,
+      "orientation": 1
+    },
+    "roofEdgeNorth": {
+      "id": 15552,
+      "type": 18,
+      "orientation": 3
+    },
+    "roofEdgeCornerSouthEast": {
+      "id": 15552,
+      "type": 21,
+      "orientation": 1
+    },
+    "roofEdgeCornerNorthEast": {
+      "id": 15552,
+      "type": 21,
+      "orientation": 2
+    },
+    "roofEdgeCornerNorthWest": {
+      "id": 15552,
+      "type": 21,
+      "orientation": 3
+    },
+    "roofEdgeCornerSouthWest": {
+      "id": 15552,
+      "type": 21,
+      "orientation": 0
+    },
+    "roofTopSideWest": {
+      "id": 15552,
+      "type": 12,
+      "orientation": 2
+    },
+    "roofTopSideEast": {
+      "id": 15552,
+      "type": 12,
+      "orientation": 0
+    },
+    "roofTopSideSouth": {
+      "id": 15552,
+      "type": 12,
+      "orientation": 1
+    },
+    "roofTopSideNorth": {
+      "id": 15552,
+      "type": 12,
+      "orientation": 3
+    },
+    "roofTopCornerSouthEast": {
+      "id": 15552,
+      "type": 16,
+      "orientation": 1
+    },
+    "roofTopCornerNorthEast": {
+      "id": 15552,
+      "type": 16,
+      "orientation": 2
+    },
+    "roofTopCornerNorthWest": {
+      "id": 15552,
+      "type": 16,
+      "orientation": 3
+    },
+    "roofTopCornerSouthWest": {
+      "id": 15552,
+      "type": 16,
+      "orientation": 0
+    },
+    "roofTopFlat": {
+      "id": 15552,
+      "type": 17,
+      "orientation": 0
+    }
+  },
+  "proceduralRules": {
+    "interiorFloor": {
+      "applyOnPlanes": "0..floors-1",
+      "overlayId": 22,
+      "overlayShape": 1,
+      "area": "all tiles inside interior floor bbox"
+    },
+    "wallRing": {
+      "applyOnPlanes": "0..floors-1",
+      "westWall": {
+        "x": "interior.minX - 1",
+        "yRange": "interior.minY..interior.maxY",
+        "role": "wallWest"
+      },
+      "eastWall": {
+        "x": "interior.maxX + 1",
+        "yRange": "interior.minY..interior.maxY",
+        "role": "wallEast"
+      },
+      "southWall": {
+        "y": "interior.minY - 1",
+        "xRange": "interior.minX..interior.maxX",
+        "role": "wallSouth"
+      },
+      "northWall": {
+        "y": "interior.maxY + 1",
+        "xRange": "interior.minX..interior.maxX",
+        "role": "wallNorth"
+      },
+      "corners": [
+        {
+          "x": "interior.minX - 1",
+          "y": "interior.minY - 1",
+          "role": "cornerSouthEast"
+        },
+        {
+          "x": "interior.minX - 1",
+          "y": "interior.maxY + 1",
+          "role": "cornerNorthEast"
+        },
+        {
+          "x": "interior.maxX + 1",
+          "y": "interior.maxY + 1",
+          "role": "cornerNorthWest"
+        },
+        {
+          "x": "interior.maxX + 1",
+          "y": "interior.minY - 1",
+          "role": "cornerSouthWest"
+        }
+      ]
+    },
+    "door": {
+      "applyOnPlane": 0,
+      "replacesOneWallSegment": true,
+      "placement": "one doorway on the camera-facing wall",
+      "safeSpan": "avoid wall corners by at least one interior tile",
+      "rolesByFacing": {
+        "west": "doorWestFacing",
+        "east": "doorEastFacing",
+        "south": "doorSouthFacing",
+        "north": "doorNorthFacing"
+      }
+    },
+    "roof": {
+      "applyOnPlane": "topFloor + 1",
+      "outerEdgeRing": {
+        "west": "roofEdgeWest",
+        "east": "roofEdgeEast",
+        "south": "roofEdgeSouth",
+        "north": "roofEdgeNorth"
+      },
+      "outerEdgeCorners": {
+        "southEast": "roofEdgeCornerSouthEast",
+        "northEast": "roofEdgeCornerNorthEast",
+        "northWest": "roofEdgeCornerNorthWest",
+        "southWest": "roofEdgeCornerSouthWest"
+      },
+      "innerPerimeter": {
+        "west": "roofTopSideWest",
+        "east": "roofTopSideEast",
+        "south": "roofTopSideSouth",
+        "north": "roofTopSideNorth"
+      },
+      "innerCorners": {
+        "southEast": "roofTopCornerSouthEast",
+        "northEast": "roofTopCornerNorthEast",
+        "northWest": "roofTopCornerNorthWest",
+        "southWest": "roofTopCornerSouthWest"
+      },
+      "flatFill": {
+        "role": "roofTopFlat",
+        "area": "interior floor bbox excluding its perimeter"
+      }
+    }
+  },
+  "notes": [
+    "This is a shell style inferred directly from RSPSi's existing Generate Building tool.",
+    "The source code currently always selects VARROCK because ThreadLocalRandom.nextInt(0,1) always returns 0.",
+    "This template describes the shell and roof only; it does not include furniture or decor."
+  ]
+}

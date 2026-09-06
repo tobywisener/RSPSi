@@ -2,6 +2,7 @@ package com.jagex.cache.def;
 
 import com.jagex.io.Buffer;
 import org.displee.cache.index.archive.Archive;
+import org.displee.cache.index.archive.file.File;
 
 public final class TextureDef
 {
@@ -11,7 +12,13 @@ public final class TextureDef
 
 	public static void unpackConfig(Archive streamLoader)
 	{
-		Buffer buffer = new Buffer(streamLoader.readFile("textures.dat"));
+		byte[] data = readTextureConfig(streamLoader);
+		if (data == null || data.length < 2) {
+			textures = new TextureDef[0];
+			return;
+		}
+
+		Buffer buffer = new Buffer(data);
 		int count = buffer.readUShort();
 		textures = new TextureDef[count];
 		for (int i = 0; i != count; ++i)
@@ -114,6 +121,46 @@ public final class TextureDef
 				textures[i].anInt1226 = buffer.readUByte();
 
 
+	}
+
+	private static byte[] readTextureConfig(Archive archive) {
+		if (archive == null) {
+			return null;
+		}
+
+		byte[] data = archive.readFile("textures.dat");
+		if (data != null) {
+			return data;
+		}
+
+		// Some caches store textures.dat as unnamed file 0 inside a single-file archive.
+		File[] files = archive.getFiles();
+		if (files != null && files.length == 1) {
+			File file = files[0];
+			return file == null ? null : file.getData();
+		}
+		return null;
+	}
+
+	public static void ensureLoaded(int count) {
+		if (count <= 0) {
+			textures = new TextureDef[0];
+			return;
+		}
+
+		if (textures == null) {
+			textures = new TextureDef[count];
+		} else if (textures.length < count) {
+			TextureDef[] expanded = new TextureDef[count];
+			System.arraycopy(textures, 0, expanded, 0, textures.length);
+			textures = expanded;
+		}
+
+		for (int i = 0; i < textures.length; i++) {
+			if (textures[i] == null) {
+				textures[i] = new TextureDef();
+			}
+		}
 	}
 
 	public static void nullLoader()

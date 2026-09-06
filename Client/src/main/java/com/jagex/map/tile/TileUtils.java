@@ -10,6 +10,7 @@ public class TileUtils {
 	public static final SimpleTile BEING_SELECTED_TILE = new SimpleTile(49073, 49073, 49073, 49073, -1, 49073, true, 49073, false);
 	public static final SimpleTile HIGHLIGHT_TILE =  new SimpleTile(0xbc614d, 0xbc614d, 0xbc614d, 0xbc614d, -1, 0xFF00FF, true, 0, false);
 	public static final SimpleTile HIDDEN_TILE = new SimpleTile(0xbc614d,0xbc614d,0xbc614d,0xbc614d, -1, 0x00ffff, true, 0, false);
+	public static final SimpleTile PICKABLE_HIDDEN_TILE = new SimpleTile(0xbc614e, 0xbc614e, 0xbc614e, 0xbc614e, -1, 0, true, 0, false);
     //00ccff
 
 	public static final int NON_WALKABLE_BIT = 1;

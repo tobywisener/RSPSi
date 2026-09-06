@@ -3,10 +3,7 @@ package com.rspsi.dialogs;
 import java.io.File;
 import java.io.IOException;
 
-import com.google.common.collect.Lists;
 import com.jagex.Client;
-import com.jagex.chunk.Chunk;
-import com.rspsi.MainWindow;
 import com.rspsi.controls.WindowControls;
 import com.rspsi.misc.ExportOptions;
 import com.rspsi.util.FXDialogs;
@@ -154,24 +151,18 @@ public class TileExportDialog extends Application {
 		WindowControls.addUtilityWindowControls(primaryStage, titleBar, controlBox);
 
 		saveButton.setOnAction(act -> {
-			for (Chunk chunk : Lists.newArrayList(Client.getSingleton().chunks)) {
-				File f = RetentionFileChooser.showSaveDialog(primaryStage, FilterMode.JMAP);
-				if (f != null) {
-					try {
-						Client.getSingleton().sceneGraph.exportSelectedTiles(generateOptions(), f);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-
-						FXDialogs.showError(primaryStage, "Error while saving prefab!",
-								"There was an error while saving the selected file.");
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						FXDialogs.showError(primaryStage, "Error while allocating prefab!",
-								"There was an error while allocating to the selected file.");
-					}
-
+			File f = RetentionFileChooser.showSaveDialog(primaryStage, FilterMode.JMAP);
+			if (f != null) {
+				try {
+					Client.getSingleton().sceneGraph.exportSelectedTiles(generateOptions(), f);
+				} catch (IOException e) {
+					e.printStackTrace();
+					FXDialogs.showError(primaryStage, "Error while saving prefab!",
+							"There was an error while saving the selected file.");
+				} catch (Exception e) {
+					e.printStackTrace();
+					FXDialogs.showError(primaryStage, "Error while allocating prefab!",
+							"There was an error while allocating to the selected file.");
 				}
 			}
 		});

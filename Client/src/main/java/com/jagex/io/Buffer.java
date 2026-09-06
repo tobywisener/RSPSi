@@ -1,5 +1,7 @@
 package com.jagex.io;
 
+import com.google.common.base.Preconditions;
+
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
@@ -421,10 +423,18 @@ public final class Buffer {
 
 	public void writeUSmartInt(int value) {
 		if (value > Short.MAX_VALUE) {
-			this.writeInt(value);
+			writeIntSmart(value);
 		} else {
-			this.writeUSmart(value);
+			writeUSmart(value);
 		}
+	}
+
+	public void writeIntSmart(int value) {
+		Preconditions.checkArgument(value > 32767);
+		Preconditions.checkArgument(value < (Integer.MAX_VALUE - 32767));
+		int diff = value - 32767;
+		writeShort(65535);
+		writeUSmart(diff);
 	}
 
 	public void skip(int bytesToSkip) {

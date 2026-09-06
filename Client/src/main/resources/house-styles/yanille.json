@@ -1,0 +1,73 @@
+{
+  "extendsStyle": "base-pitched-roof.json",
+  "id": "yanille_house_shell_v1",
+  "label": "Yanille Thatched House",
+  "source": {
+    "kind": "jmap_export",
+    "exportedFile": "yanille-house.jmap",
+    "notes": [
+      "Derived from yanille-house.jmap in the RSPSi root.",
+      "The procedural shell ignores the exported interior contents and only reuses the exterior wall, window, door, and roof vocabulary."
+    ]
+  },
+  "proceduralRecipe": {
+    "groundFloor": {
+      "overlayId": 16
+    },
+    "village": {
+      "houseStyles": ["yanille_house_shell_v1"],
+      "path": {
+        "overlayId": 10
+      },
+      "centrepiece": {
+        "overlayId": 10
+      }
+    },
+    "roof": {
+      "edgeSide": {
+        "id": 1792,
+        "type": 18
+      },
+      "edgeCorner": {
+        "id": 1792,
+        "type": 19
+      },
+      "topSide": {
+        "id": 1926,
+        "type": 12
+      },
+      "topCorner": {
+        "id": 1926,
+        "type": 16
+      },
+      "topFlat": {
+        "id": 1926,
+        "type": 17
+      }
+    },
+    "shell": {
+      "wall": {
+        "id": 1904,
+        "type": 0
+      },
+      "corner": {
+        "id": 1902,
+        "type": 3
+      },
+      "door": {
+        "id": 1540,
+        "type": 0
+      }
+    },
+    "wallDecor": {
+      "window": {
+        "id": 1828,
+        "type": 5,
+        "mirrorId": 1832,
+        "mirrorType": 4,
+        "minCount": 1,
+        "areaPerWindow": 20
+      }
+    }
+  }
+}

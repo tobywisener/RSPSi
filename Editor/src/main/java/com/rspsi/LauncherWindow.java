@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.rspsi.util.FXUtils;
+import com.rspsi.util.OSUtil;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
@@ -42,41 +43,39 @@ public class LauncherWindow extends Application {
 	
 	private LauncherController controller;
 	private List<String> oldCachePaths;
+	private MainWindow editorToReplace;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		singleton = this;
 		this.primaryStage = primaryStage;
+		Settings.loadSettings();
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/loadscreen.fxml"));
 		controller = new LauncherController();
 		loader.setController(controller);
 		Parent content = loader.load();
 		Scene scene = new Scene(content);
 
-		scene.setFill(Color.TRANSPARENT);
-		
+		final boolean useCustomChrome = !OSUtil.isMac();
+		if (useCustomChrome) {
+			scene.setFill(Color.TRANSPARENT);
+		}
+
 		primaryStage.setTitle("RSPSi Map Editor Launcher");
-		primaryStage.initStyle(StageStyle.TRANSPARENT);
+		primaryStage.initStyle(useCustomChrome ? StageStyle.TRANSPARENT : StageStyle.DECORATED);
 		primaryStage.setScene(scene);
 		primaryStage.getIcons().add(ResourceLoader.getSingleton().getLogo64());
-
-		primaryStage.show();
-		primaryStage.sizeToScene();
-		FXUtils.centerStage(primaryStage);
-		primaryStage.centerOnScreen();
-		
-		Settings.loadSettings();
 		
 		String cacheLoc = Settings.getSetting("cacheLocation", Config.cacheLocation.get());
 	
 		oldCachePaths = Settings.getSetting("oldCache", Lists.newArrayList());
 		fillOldPaths();
 		
-		controller.getCacheLocation().getEditor().setText(new File(cacheLoc).getAbsolutePath() + File.separator);
+		controller.getCacheLocation().getEditor().setText(normalizeCachePath(cacheLoc));
 		
-		ChangeListenerUtil.addListener(() -> {
-			primaryStage.sizeToScene();
-		}, controller.getPluginTitlePane().expandedProperty());
+		if (useCustomChrome) {
+			ChangeListenerUtil.addListener(() -> primaryStage.sizeToScene(), controller.getPluginTitlePane().expandedProperty());
+		}
 		
 		
 		controller.getDisablePluginButton().setOnAction(evt -> {
@@ -95,7 +94,10 @@ public class LauncherWindow extends Application {
 			}
 		});
 		
-		controller.getCancelButton().setOnAction(evt -> primaryStage.hide());
+		controller.getCancelButton().setOnAction(evt -> {
+			editorToReplace = null;
+			primaryStage.hide();
+		});
 		
 		controller.getEnablePluginButton().setOnAction(evt -> {
 			String pluginName = controller.getDisabledPlugins().getFocusModel().getFocusedItem();
@@ -128,7 +130,7 @@ public class LauncherWindow extends Application {
 			File f = RetentionFileChooser.showOpenFolderDialog(primaryStage, null);
 			if(f != null) {
 				String oldPath = controller.getCacheLocation().getEditor().getText();
-				String newPath = f.getAbsolutePath() + File.separator;
+				String newPath = normalizeCachePath(f.getAbsolutePath());
 
 				putOldPath(oldPath);
 				putOldPath(newPath);
@@ -139,30 +141,95 @@ public class LauncherWindow extends Application {
 		});
 		
 		controller.getLaunchButton().setOnAction(evt -> {
-			Config.cacheLocation.set(controller.getCacheLocation().getEditor().getText());
-			Settings.properties.put("cacheLocation", Config.cacheLocation.get());
-			Settings.properties.put("lastCacheLocation", cacheLoc);
-			primaryStage.hide();
-			MainWindow window = new MainWindow();
-			Stage otherStage = new Stage();
-			otherStage.setX(primaryStage.getX());
-			otherStage.setY(primaryStage.getY());
-			window.start(otherStage);
+			launchEditor(useCustomChrome);
 		});
 
 		
 		populatePlugins();
-		WindowControls controls = WindowControls.addWindowControlsFixed(primaryStage, controller.getTopBar(), controller.getControlBox());
-		primaryStage.sizeToScene();
+		if (useCustomChrome) {
+			WindowControls controls = WindowControls.addWindowControlsFixed(primaryStage, controller.getTopBar(), controller.getControlBox());
+		}
+		if (useCustomChrome) {
+			primaryStage.sizeToScene();
+		}
 
+		if (shouldSkipLauncher(cacheLoc)) {
+			launchEditor(useCustomChrome);
+		} else {
+			primaryStage.show();
+			primaryStage.setIconified(false);
+			if (useCustomChrome) {
+				primaryStage.sizeToScene();
+			}
+			if (useCustomChrome) {
+				FXUtils.centerStage(primaryStage);
+				primaryStage.centerOnScreen();
+			}
+		}
+
+	}
+
+	public void showCacheDialog(MainWindow currentEditor) {
+		editorToReplace = currentEditor;
+		controller.getCacheLocation().getEditor().setText(normalizeCachePath(Config.cacheLocation.get()));
+		fillOldPaths();
+		populatePlugins();
+		primaryStage.show();
+		primaryStage.setIconified(false);
+		primaryStage.toFront();
+		primaryStage.requestFocus();
 	}
 	
 	private void putOldPath(String path) {
+		if(path == null || path.isBlank()) {
+			return;
+		}
 		if(!oldCachePaths.contains(path)) {
 			oldCachePaths.add(0, path);
 			Settings.putSetting("oldCache", oldCachePaths);
 			fillOldPaths();
 		}
+	}
+
+	private void launchEditor(boolean useCustomChrome) {
+		String selectedCache = normalizeCachePath(controller.getCacheLocation().getEditor().getText());
+		Config.cacheLocation.set(selectedCache);
+		Settings.properties.put("cacheLocation", selectedCache);
+		Settings.properties.put("lastCacheLocation", selectedCache);
+		putOldPath(selectedCache);
+		Settings.saveSettings();
+
+		MainWindow currentEditor = editorToReplace;
+		editorToReplace = null;
+		primaryStage.hide();
+
+		MainWindow window = new MainWindow();
+		Stage otherStage = new Stage();
+		Stage positionSource = currentEditor != null ? currentEditor.getStage() : primaryStage;
+		if (useCustomChrome && positionSource != null) {
+			otherStage.setX(positionSource.getX());
+			otherStage.setY(positionSource.getY());
+		}
+		window.start(otherStage);
+		if (currentEditor != null) {
+			currentEditor.closeForCacheSwitch();
+		}
+	}
+
+	private static boolean shouldSkipLauncher(String cachePath) {
+		if (cachePath == null || cachePath.isBlank()) {
+			return false;
+		}
+		return new File(cachePath).isDirectory();
+	}
+
+	private static String normalizeCachePath(String cachePath) {
+		if (cachePath == null || cachePath.isBlank()) {
+			return "";
+		}
+		File file = new File(cachePath);
+		String absolutePath = file.getAbsolutePath();
+		return absolutePath.endsWith(File.separator) ? absolutePath : absolutePath + File.separator;
 	}
 	
 	private void fillOldPaths() {

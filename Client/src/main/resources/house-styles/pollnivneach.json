@@ -1,0 +1,777 @@
+{
+  "extendsStyle": "base-flat-parapet-tiered.json",
+  "id": "pollnivneach_house_shell_v1",
+  "label": "Pollnivneach Flat Roof House",
+  "source": {
+    "kind": "jmap_export",
+    "exportedFile": "pollnivneach.jmap",
+    "notes": [
+      "Derived from the Pollnivneach JMAP exported into the RSPSi root.",
+      "The source roof is unfinished; the lone overlay 42 tile on plane 3 is preserved as a hint rather than treated as a complete roof tile.",
+      "The exported parapet was partial, so the missing west-side parapet walls, corners, and front-wall decor were inferred to complete the roof perimeter."
+    ]
+  },
+  "proceduralRecipe": {
+    "footprints": {
+      "rectWeight": 0,
+      "lWeight": 5,
+      "uWeight": 3
+    },
+    "groundFloor": {
+      "overlayId": 26
+    },
+    "village": {
+      "houseStyles": ["pollnivneach_house_shell_v1"],
+      "path": {
+        "overlayId": 26
+      },
+      "centrepiece": {
+        "overlayId": 26
+      }
+    },
+    "roof": {
+      "overlayId": 9,
+      "parapetWall": {
+        "id": 1416,
+        "type": 0
+      },
+      "parapetCorner": {
+        "id": 1416,
+        "type": 1
+      },
+      "parapetInnerCorner": {
+        "id": 1416,
+        "type": 2
+      }
+    },
+    "shell": {
+      "wall": {
+        "id": 1415,
+        "type": 0
+      },
+      "corner": {
+        "id": 1415,
+        "type": 1
+      },
+      "innerCorner": {
+        "id": 1415,
+        "type": 2
+      },
+      "door": {
+        "id": 1533,
+        "type": 0
+      },
+      "doubleDoors": [
+        {
+          "leftDoorId": 6216,
+          "rightDoorId": 6217,
+          "minFrontageSpan": 8
+        }
+      ]
+    },
+    "wallDecor": {
+      "window": {
+        "id": 6247,
+        "type": 5,
+        "mirrorType": 4,
+        "minCount": 1,
+        "areaPerWindow": 24
+      },
+      "parapet": {
+        "id": 1414,
+        "type": 5
+      }
+    }
+  },
+  "templateObservation": {
+    "outerWallBounds": {
+      "minX": 1,
+      "maxX": 7,
+      "minY": 1,
+      "maxY": 6
+    },
+    "groundInteriorBounds": {
+      "minX": 2,
+      "maxX": 6,
+      "minY": 2,
+      "maxY": 5
+    },
+    "roofOverlayBounds": {
+      "plane": 1,
+      "minX": 3,
+      "maxX": 6,
+      "minY": 2,
+      "maxY": 5
+    },
+    "roofSupportFlags": {
+      "plane": 2,
+      "minX": 1,
+      "maxX": 7,
+      "minY": 0,
+      "maxY": 7,
+      "tileFlag": 1
+    },
+    "unfinishedRoofHints": [
+      {
+        "x": 7,
+        "y": 7,
+        "z": 3,
+        "overlayId": 42
+      }
+    ]
+  },
+  "groundShell": {
+    "walls": [
+      {
+        "x": 1,
+        "y": 1,
+        "plane": 0,
+        "id": 1415,
+        "type": 1,
+        "orientation": 1
+      },
+      {
+        "x": 1,
+        "y": 2,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 2
+      },
+      {
+        "x": 1,
+        "y": 3,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 2
+      },
+      {
+        "x": 1,
+        "y": 4,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 2
+      },
+      {
+        "x": 1,
+        "y": 5,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 2
+      },
+      {
+        "x": 1,
+        "y": 6,
+        "plane": 0,
+        "id": 1415,
+        "type": 1,
+        "orientation": 2
+      },
+      {
+        "x": 2,
+        "y": 1,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 1
+      },
+      {
+        "x": 2,
+        "y": 6,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 3
+      },
+      {
+        "x": 3,
+        "y": 1,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 1
+      },
+      {
+        "x": 3,
+        "y": 6,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 3
+      },
+      {
+        "x": 4,
+        "y": 1,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 1
+      },
+      {
+        "x": 4,
+        "y": 6,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 3
+      },
+      {
+        "x": 5,
+        "y": 1,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 1
+      },
+      {
+        "x": 5,
+        "y": 6,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 3
+      },
+      {
+        "x": 6,
+        "y": 1,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 1
+      },
+      {
+        "x": 6,
+        "y": 6,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 3
+      },
+      {
+        "x": 7,
+        "y": 1,
+        "plane": 0,
+        "id": 1415,
+        "type": 1,
+        "orientation": 0
+      },
+      {
+        "x": 7,
+        "y": 2,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 0
+      },
+      {
+        "x": 7,
+        "y": 3,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 0
+      },
+      {
+        "x": 7,
+        "y": 4,
+        "plane": 0,
+        "id": 1533,
+        "type": 0,
+        "orientation": 0
+      },
+      {
+        "x": 7,
+        "y": 5,
+        "plane": 0,
+        "id": 1415,
+        "type": 0,
+        "orientation": 0
+      },
+      {
+        "x": 7,
+        "y": 6,
+        "plane": 0,
+        "id": 1415,
+        "type": 1,
+        "orientation": 3
+      }
+    ],
+    "wallDecor": [
+      {
+        "x": 5,
+        "y": 1,
+        "plane": 0,
+        "id": 6247,
+        "type": 5,
+        "orientation": 1
+      },
+      {
+        "x": 5,
+        "y": 2,
+        "plane": 0,
+        "id": 6247,
+        "type": 4,
+        "orientation": 3
+      },
+      {
+        "x": 5,
+        "y": 5,
+        "plane": 0,
+        "id": 6247,
+        "type": 4,
+        "orientation": 1
+      },
+      {
+        "x": 5,
+        "y": 6,
+        "plane": 0,
+        "id": 6247,
+        "type": 5,
+        "orientation": 3
+      }
+    ]
+  },
+  "roofParapet": {
+    "walls": [
+      {
+        "x": 2,
+        "y": 1,
+        "plane": 1,
+        "id": 1416,
+        "type": 1,
+        "orientation": 1
+      },
+      {
+        "x": 2,
+        "y": 2,
+        "plane": 1,
+        "id": 1416,
+        "type": 0,
+        "orientation": 2
+      },
+      {
+        "x": 2,
+        "y": 3,
+        "plane": 1,
+        "id": 1416,
+        "type": 0,
+        "orientation": 2
+      },
+      {
+        "x": 2,
+        "y": 4,
+        "plane": 1,
+        "id": 1416,
+        "type": 0,
+        "orientation": 2
+      },
+      {
+        "x": 2,
+        "y": 5,
+        "plane": 1,
+        "id": 1416,
+        "type": 0,
+        "orientation": 2
+      },
+      {
+        "x": 2,
+        "y": 6,
+        "plane": 1,
+        "id": 1416,
+        "type": 1,
+        "orientation": 2
+      },
+      {
+        "x": 3,
+        "y": 1,
+        "plane": 1,
+        "id": 1416,
+        "type": 0,
+        "orientation": 1
+      },
+      {
+        "x": 3,
+        "y": 6,
+        "plane": 1,
+        "id": 1416,
+        "type": 0,
+        "orientation": 3
+      },
+      {
+        "x": 4,
+        "y": 1,
+        "plane": 1,
+        "id": 1416,
+        "type": 0,
+        "orientation": 1
+      },
+      {
+        "x": 4,
+        "y": 6,
+        "plane": 1,
+        "id": 1416,
+        "type": 0,
+        "orientation": 3
+      },
+      {
+        "x": 5,
+        "y": 1,
+        "plane": 1,
+        "id": 1416,
+        "type": 0,
+        "orientation": 1
+      },
+      {
+        "x": 5,
+        "y": 6,
+        "plane": 1,
+        "id": 1416,
+        "type": 0,
+        "orientation": 3
+      },
+      {
+        "x": 6,
+        "y": 1,
+        "plane": 1,
+        "id": 1416,
+        "type": 0,
+        "orientation": 1
+      },
+      {
+        "x": 6,
+        "y": 6,
+        "plane": 1,
+        "id": 1416,
+        "type": 0,
+        "orientation": 3
+      },
+      {
+        "x": 7,
+        "y": 1,
+        "plane": 1,
+        "id": 1416,
+        "type": 1,
+        "orientation": 0
+      },
+      {
+        "x": 7,
+        "y": 2,
+        "plane": 1,
+        "id": 1416,
+        "type": 0,
+        "orientation": 0
+      },
+      {
+        "x": 7,
+        "y": 3,
+        "plane": 1,
+        "id": 1416,
+        "type": 0,
+        "orientation": 0
+      },
+      {
+        "x": 7,
+        "y": 4,
+        "plane": 1,
+        "id": 1416,
+        "type": 0,
+        "orientation": 0
+      },
+      {
+        "x": 7,
+        "y": 5,
+        "plane": 1,
+        "id": 1416,
+        "type": 0,
+        "orientation": 0
+      },
+      {
+        "x": 7,
+        "y": 6,
+        "plane": 1,
+        "id": 1416,
+        "type": 1,
+        "orientation": 3
+      }
+    ],
+    "wallDecor": [
+      {
+        "x": 2,
+        "y": 2,
+        "plane": 1,
+        "id": 1414,
+        "type": 5,
+        "orientation": 2
+      },
+      {
+        "x": 2,
+        "y": 3,
+        "plane": 1,
+        "id": 1414,
+        "type": 5,
+        "orientation": 2
+      },
+      {
+        "x": 2,
+        "y": 4,
+        "plane": 1,
+        "id": 1414,
+        "type": 5,
+        "orientation": 2
+      },
+      {
+        "x": 2,
+        "y": 5,
+        "plane": 1,
+        "id": 1414,
+        "type": 5,
+        "orientation": 2
+      },
+      {
+        "x": 3,
+        "y": 1,
+        "plane": 1,
+        "id": 1414,
+        "type": 5,
+        "orientation": 1
+      },
+      {
+        "x": 3,
+        "y": 6,
+        "plane": 1,
+        "id": 1414,
+        "type": 5,
+        "orientation": 3
+      },
+      {
+        "x": 4,
+        "y": 1,
+        "plane": 1,
+        "id": 1414,
+        "type": 5,
+        "orientation": 1
+      },
+      {
+        "x": 4,
+        "y": 6,
+        "plane": 1,
+        "id": 1414,
+        "type": 5,
+        "orientation": 3
+      },
+      {
+        "x": 5,
+        "y": 1,
+        "plane": 1,
+        "id": 1414,
+        "type": 5,
+        "orientation": 1
+      },
+      {
+        "x": 5,
+        "y": 6,
+        "plane": 1,
+        "id": 1414,
+        "type": 5,
+        "orientation": 3
+      },
+      {
+        "x": 6,
+        "y": 1,
+        "plane": 1,
+        "id": 1414,
+        "type": 5,
+        "orientation": 1
+      },
+      {
+        "x": 6,
+        "y": 6,
+        "plane": 1,
+        "id": 1414,
+        "type": 5,
+        "orientation": 3
+      },
+      {
+        "x": 7,
+        "y": 2,
+        "plane": 1,
+        "id": 1414,
+        "type": 5,
+        "orientation": 0
+      },
+      {
+        "x": 7,
+        "y": 3,
+        "plane": 1,
+        "id": 1414,
+        "type": 5,
+        "orientation": 0
+      },
+      {
+        "x": 7,
+        "y": 4,
+        "plane": 1,
+        "id": 1414,
+        "type": 5,
+        "orientation": 0
+      },
+      {
+        "x": 7,
+        "y": 5,
+        "plane": 1,
+        "id": 1414,
+        "type": 5,
+        "orientation": 0
+      }
+    ],
+    "roofOverlayTiles": [
+      {
+        "x": 3,
+        "y": 2,
+        "plane": 1,
+        "overlayId": 9,
+        "overlayShape": 1,
+        "orientation": 0,
+        "tileFlag": 0
+      },
+      {
+        "x": 3,
+        "y": 3,
+        "plane": 1,
+        "overlayId": 9,
+        "overlayShape": 1,
+        "orientation": 0,
+        "tileFlag": 0
+      },
+      {
+        "x": 3,
+        "y": 4,
+        "plane": 1,
+        "overlayId": 9,
+        "overlayShape": 1,
+        "orientation": 0,
+        "tileFlag": 0
+      },
+      {
+        "x": 3,
+        "y": 5,
+        "plane": 1,
+        "overlayId": 9,
+        "overlayShape": 1,
+        "orientation": 0,
+        "tileFlag": 0
+      },
+      {
+        "x": 4,
+        "y": 2,
+        "plane": 1,
+        "overlayId": 9,
+        "overlayShape": 1,
+        "orientation": 0,
+        "tileFlag": 0
+      },
+      {
+        "x": 4,
+        "y": 3,
+        "plane": 1,
+        "overlayId": 9,
+        "overlayShape": 1,
+        "orientation": 0,
+        "tileFlag": 0
+      },
+      {
+        "x": 4,
+        "y": 4,
+        "plane": 1,
+        "overlayId": 9,
+        "overlayShape": 1,
+        "orientation": 0,
+        "tileFlag": 0
+      },
+      {
+        "x": 4,
+        "y": 5,
+        "plane": 1,
+        "overlayId": 9,
+        "overlayShape": 1,
+        "orientation": 0,
+        "tileFlag": 0
+      },
+      {
+        "x": 5,
+        "y": 2,
+        "plane": 1,
+        "overlayId": 9,
+        "overlayShape": 1,
+        "orientation": 0,
+        "tileFlag": 0
+      },
+      {
+        "x": 5,
+        "y": 3,
+        "plane": 1,
+        "overlayId": 9,
+        "overlayShape": 1,
+        "orientation": 0,
+        "tileFlag": 0
+      },
+      {
+        "x": 5,
+        "y": 4,
+        "plane": 1,
+        "overlayId": 9,
+        "overlayShape": 1,
+        "orientation": 0,
+        "tileFlag": 0
+      },
+      {
+        "x": 5,
+        "y": 5,
+        "plane": 1,
+        "overlayId": 9,
+        "overlayShape": 1,
+        "orientation": 0,
+        "tileFlag": 0
+      },
+      {
+        "x": 6,
+        "y": 2,
+        "plane": 1,
+        "overlayId": 9,
+        "overlayShape": 1,
+        "orientation": 0,
+        "tileFlag": 0
+      },
+      {
+        "x": 6,
+        "y": 3,
+        "plane": 1,
+        "overlayId": 9,
+        "overlayShape": 1,
+        "orientation": 0,
+        "tileFlag": 0
+      },
+      {
+        "x": 6,
+        "y": 4,
+        "plane": 1,
+        "overlayId": 9,
+        "overlayShape": 1,
+        "orientation": 0,
+        "tileFlag": 0
+      },
+      {
+        "x": 6,
+        "y": 5,
+        "plane": 1,
+        "overlayId": 9,
+        "overlayShape": 1,
+        "orientation": 0,
+        "tileFlag": 0
+      }
+    ]
+  }
+}

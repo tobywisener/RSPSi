@@ -1,0 +1,47 @@
+{
+  "id": "base_flat_parapet_tiered_settlement_v1",
+  "label": "Base Flat Parapet Tiered Settlement",
+  "coordinateModel": {
+    "basis": "interior_floor_bbox",
+    "description": "The selected tiles are treated as the ground-floor interior bbox. Ground walls sit one tile outside that bbox. The flat roof overlay is painted across the selected bbox on the roof plane, with a parapet built around that top plane."
+  },
+  "constraints": {
+    "minInteriorWidth": 4,
+    "minInteriorHeight": 3,
+    "maxFloors": 3,
+    "supportsRectangularOnly": false,
+    "roofKind": "flat_parapet"
+  },
+  "proceduralRecipe": {
+    "kind": "flat_parapet_rectangular",
+    "tieredFlooring": true,
+    "tierFrontInset": 3,
+    "tierSideInset": 2,
+    "balconyOpeningWidth": 2,
+    "footprints": {
+      "allowedShapes": ["RECT", "L", "U"],
+      "rectWeight": 1,
+      "lWeight": 1,
+      "uWeight": 1,
+      "minWingWidth": 3,
+      "minWingDepth": 3,
+      "minCourtyardWidth": 2,
+      "minCourtyardDepth": 2
+    },
+    "groundFloor": {
+      "overlayShape": 1,
+      "tileFlag": 4
+    },
+    "village": {
+      "path": {
+        "overlayShape": 1
+      },
+      "centrepiece": {
+        "overlayShape": 1
+      }
+    },
+    "roof": {
+      "overlayShape": 1
+    }
+  }
+}

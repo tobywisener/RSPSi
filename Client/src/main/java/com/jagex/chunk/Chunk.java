@@ -274,40 +274,30 @@ public class Chunk {
 	}
 
 	public void loadChunk() {
-	
+		loadTerrain();
+		loadObjects();
+	}
 
-			scenegraph.setChunk(this);
-			incompleteAnimables.clear();
-			//scenegraph.reset();
-			
-		/*	for (int z = 0; z < 4; z++) {
-				for (int x = 0; x < 64; x++) {
-					for (int y = 0; y < 64; y++) {
-						mapRegion.tileFlags[z][x][y] = 0;
-					}
-				}
-			}*/
-			System.out.println("Chunk offset " + offsetX + ":" + offsetY);
-			// XXX
-			if (tileMapData != null) {
-				System.out.println("tilemap data not null");
-				mapRegion.unpackTiles(tileMapData, offsetX, offsetY, regionX, regionY);
+	public void loadTerrain() {
+		scenegraph.setChunk(this);
+		incompleteAnimables.clear();
+		System.out.println("Chunk offset " + offsetX + ":" + offsetY);
+		if (tileMapData != null) {
+			System.out.println("tilemap data not null");
+			mapRegion.unpackTiles(tileMapData, offsetX, offsetY, regionX, regionY);
+		}
+	}
 
-			} /*else if (regionY < 700) {//XXX Figure out why this exists
-				mapRegion.method174(0, 0, 64, 64);
-			}*/
-			if (objectMapData != null) {
-				System.out.println("object data not null");
-				mapRegion.unpackObjects(scenegraph, objectMapData, offsetX, offsetY);
+	public void loadObjects() {
+		scenegraph.setChunk(this);
+		if (objectMapData != null) {
+			System.out.println("object data not null");
+			mapRegion.unpackObjects(scenegraph, objectMapData, offsetX, offsetY);
+		}
 
-			}
-
-			
-
-			method63();
-			this.loaded = true;
-
-			updated = true;
+		method63();
+		this.loaded = true;
+		updated = true;
 	}
 
 	public final void method50(int x, int y, int z, int nullColour, int defaultColour) {
@@ -484,8 +474,6 @@ public class Chunk {
 	public boolean ready() {
 		if (ready)
 			return true;
-		if(newMap)
-			return true;
 		if (tileMapId != -1 && tileMapData == null) {
 			//System.out.println("TILE MAP ID: " + tileMapId + " NULL");
 			return false;
@@ -493,9 +481,10 @@ public class Chunk {
 		if (objectMapId != -1 && objectMapData == null) {
 			//System.out.println("OBJECT MAP ID: " + tileMapId + " NULL");
 			return false;
-		} else if(objectMapId != -1 && objectMapData != null)
+		} else if(objectMapId != -1 && objectMapData != null) {
 			if (!MapRegion.objectsReady(objectMapData, 0, 0))
 				return false;
+		}
 
 		// This caused tiles to be loaded twice
 		//loadChunk();
@@ -577,16 +566,6 @@ public class Chunk {
 		spawn.setPreviousId(id);
 		spawn.setPreviousType(type);
 		spawn.setPreviousOrientation(orientation);
-	}
-	
-	private boolean newMap;
-	
-	public boolean isNewMap() {
-		return newMap;
-	}
-
-	public void setNewMap(boolean b) {
-		newMap = b;
 	}
 	
 	@Setter

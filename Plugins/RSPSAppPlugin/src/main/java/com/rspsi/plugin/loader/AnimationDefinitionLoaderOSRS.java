@@ -6,7 +6,6 @@ import com.jagex.cache.anim.Animation;
 import com.jagex.cache.loader.anim.AnimationDefinitionLoader;
 import com.jagex.io.Buffer;
 
-
 public class AnimationDefinitionLoaderOSRS extends AnimationDefinitionLoader {
 
 
@@ -23,14 +22,9 @@ public class AnimationDefinitionLoaderOSRS extends AnimationDefinitionLoader {
 		}
 
 		for (int id = 0; id < count; id++) {
-			if (animations[id] == null) {
-				animations[id] = new Animation();
-			}
 
 			animations[id] = decode(buffer);
 		}
-
-		System.out.println("Loaded: " + count + " animations");
 	}
 
 	@Override
@@ -43,14 +37,9 @@ public class AnimationDefinitionLoaderOSRS extends AnimationDefinitionLoader {
 		}
 
 		for (int id = 0; id < count; id++) {
-			if (animations[id] == null) {
-				animations[id] = new Animation();
-			}
 
 			animations[id] = decode(buffer);
 		}
-
-		System.out.println("Loaded: " + count + " animations");
 	}
 	
 	protected Animation decode(Buffer buffer) {
@@ -66,17 +55,18 @@ public class AnimationDefinitionLoaderOSRS extends AnimationDefinitionLoader {
 				int[] secondaryFrames = new int[frameCount];
 				int[] durations = new int[frameCount];
 
-				for (int i = 0; i < frameCount; i++) {
-					durations[i] = buffer.readUShort();
+				for (int frame = 0; frame < frameCount; frame++) {
+					durations[frame] = buffer.readUShort();
 				}
 
-				for (int i = 0; i < frameCount; i++) {
-					primaryFrames[i] = buffer.readUShort();
-					secondaryFrames[i] = -1;
+				for (int frame = 0; frame < frameCount; frame++) {
+					primaryFrames[frame] = buffer.readUShort();
+					secondaryFrames[frame] = -1;
 				}
+				
 
-				for (int i = 0; i < frameCount; i++) {
-					primaryFrames[i] += buffer.readUShort() << 16;
+				for (int frame = 0; frame < frameCount; frame++) {
+					primaryFrames[frame] += buffer.readUShort() << 16;
 				}
 
 				animation.setFrameCount(frameCount);
@@ -124,7 +114,23 @@ public class AnimationDefinitionLoaderOSRS extends AnimationDefinitionLoader {
 				int len = buffer.readUByte();
 
 				for (int i = 0; i < len; i++) {
-					buffer.readUTriByte();
+					buffer.skip(3);
+				}
+			} else if (opcode == 14) {
+				int len = buffer.readInt();
+			} else if (opcode == 15) {
+				int count = buffer.readUShort();
+				for(int i = 0; i < count; ++i) {
+					int var6 = buffer.readUShort();
+					buffer.skip(3);
+				}
+			} else if (opcode == 16) {
+				int skeletalRangeBegin = buffer.readUShort();
+				int skeletalRangeEnd = buffer.readUShort();
+			} else if (opcode == 17) {
+				int count = buffer.readUByte();
+				for(int i = 0; i < count; ++i) {
+					buffer.readUByte();
 				}
 			} else {
 				System.out.println("Error unrecognised seq config code: " + opcode);

@@ -1,0 +1,72 @@
+{
+  "extendsStyle": "base-pitched-roof.json",
+  "id": "falador_house_shell_v1",
+  "label": "Falador White House",
+  "source": {
+    "kind": "jmap_export",
+    "exportedFile": "falador-house.jmap",
+      "notes": [
+        "Derived from falador-house.jmap in the RSPSi root.",
+        "The export is missing one side of the building, so the procedural recipe reuses the observed shell and roof vocabulary and mirrors it into a full rectangle.",
+        "The sampled Falador window piece comes from the same wall-slot family as the shell rather than a separate wall-decoration object."
+      ]
+  },
+  "proceduralRecipe": {
+    "groundFloor": {
+      "overlayId": 13
+    },
+    "village": {
+      "houseStyles": ["falador_house_shell_v1"],
+      "path": {
+        "overlayId": 3
+      },
+      "centrepiece": {
+        "overlayId": 10
+      }
+    },
+    "roof": {
+      "edgeSide": {
+        "id": 24125,
+        "type": 18
+      },
+      "edgeCorner": {
+        "id": 24125,
+        "type": 21
+      },
+      "topSide": {
+        "id": 24125,
+        "type": 12
+      },
+      "topCorner": {
+        "id": 24125,
+        "type": 16
+      },
+      "topFlat": {
+        "id": 24125,
+        "type": 17
+      }
+    },
+    "shell": {
+      "wall": {
+        "id": 23994,
+        "type": 0
+      },
+      "corner": {
+        "id": 23994,
+        "type": 1
+      },
+      "door": {
+        "id": 24050,
+        "type": 0
+      }
+    },
+    "wallDecor": {
+      "window": {
+        "id": 23995,
+        "type": 0,
+        "minCount": 1,
+        "areaPerWindow": 20
+      }
+    }
+  }
+}

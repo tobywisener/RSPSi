@@ -400,7 +400,7 @@ public class SceneGraph {
 	}
 
 	public boolean addEntity(int x, int y, int plane, Renderable renderable, int yaw, ObjectKey key, int renderHeight,
-	                         int delta, boolean accountForYaw, boolean temporary) {
+							 int delta, boolean accountForYaw, boolean temporary) {
 		if (renderable == null)
 			return true;
 
@@ -461,7 +461,7 @@ public class SceneGraph {
 	}
 
 	public void addGroundItem(int x, int y, int z, int key, Renderable primary, Renderable secondary,
-	                          Renderable tertiary, int plane) {
+							  Renderable tertiary, int plane) {
 		GroundItem item = new GroundItem();
 		item.setPrimary(primary);
 		item.setX(x * 128 + 64);
@@ -492,7 +492,7 @@ public class SceneGraph {
 	}
 
 	public ObjectKey addObject(int tileX, int tileY, int plane, int objectId, int objectType, int rotation,
-	                           boolean temporary) {
+							   boolean temporary) {
 		if (tiles[plane][tileX][tileY] == null) {
 			tiles[plane][tileX][tileY] = new SceneTile(tileX, tileY, plane);
 		}
@@ -508,7 +508,7 @@ public class SceneGraph {
 	}
 
 	public boolean addObject(int x, int y, int plane, int width, int length, Renderable renderable, ObjectKey key, int yaw,
-	                         int j, boolean temporary) {
+							 int j, boolean temporary) {
 		if (renderable == null)
 			return true;
 
@@ -519,7 +519,7 @@ public class SceneGraph {
 	}
 
 	private boolean addRenderable(int plane, int minX, int minY, int deltaX, int deltaY, int centreX, int centreY,
-	                              int renderHeight, Renderable renderable, int yaw, boolean flag, ObjectKey key, boolean temporary) {
+								  int renderHeight, Renderable renderable, int yaw, boolean flag, ObjectKey key, boolean temporary) {
 
 
 		for (int x = minX; x < minX + deltaX; x++) {
@@ -613,7 +613,7 @@ public class SceneGraph {
 	}
 
 	public boolean addRenderable(int plane, int worldY, Renderable renderable, int orientation, int i1, int j1,
-	                             int renderHeight, int minX, int i2, ObjectKey key, int minY, boolean temporary) {
+								 int renderHeight, int minX, int i2, ObjectKey key, int minY, boolean temporary) {
 		if (renderable == null)
 			return true;
 
@@ -656,9 +656,9 @@ public class SceneGraph {
 	 */
 
 	public void addTile(int plane, int x, int y, int type, int orientation, int texture, int centreZ, int eastZ,
-	                    int northEastZ, int northZ, int centreUnderColour, int eastUnderColour, int neUnderColour,
-	                    int northUnderColour, int centreOverColour, int eastOverColour, int neOverColour, int northOverColour,
-	                    int underlayColour, int textureColour, int colour, int copy_texture, int copy_color, boolean tex, byte flags) {
+						int northEastZ, int northZ, int centreUnderColour, int eastUnderColour, int neUnderColour,
+						int northUnderColour, int centreOverColour, int eastOverColour, int neOverColour, int northOverColour,
+						int underlayColour, int textureColour, int colour, int copy_texture, int copy_color, boolean tex, byte flags) {
 		if (type == 434 && copy_texture != 24) {
 			SimpleTile tile = new SimpleTile(centreUnderColour, eastUnderColour, neUnderColour, northUnderColour, texture,
 					underlayColour, centreZ == eastZ && centreZ == northEastZ && centreZ == northZ, colour, tex);
@@ -756,7 +756,7 @@ public class SceneGraph {
 	}
 
 	public void addWall(ObjectKey key, int x, int y, int plane, int i, Renderable primary, Renderable secondary, int height,
-	                    int j1, boolean temporary) {
+						int j1, boolean temporary) {
 		if (primary == null && secondary == null)
 			return;
 
@@ -791,7 +791,7 @@ public class SceneGraph {
 	}
 
 	public void addWallDecoration(ObjectKey key, int y, int orientation, int plane, int xDisplacement, int height,
-	                              Renderable renderable, int x, int yDisplacement, int attributes, boolean temporary) {
+								  Renderable renderable, int x, int yDisplacement, int attributes, boolean temporary) {
 		if (renderable == null)
 			return;
 		WallDecoration decoration = new WallDecoration(key, (x) * 128 + 64 + xDisplacement,
@@ -1671,17 +1671,17 @@ public class SceneGraph {
 										((TileChange<OverlayState>) currentState.get()).preserveTileState(tileState);
 									}
 									if (Options.overlayPaintShapeId.get() == 0 || KeyBindings.actionValid(KeyActions.OVERLAY_REMOVE)) {
-										this.getMapRegion().overlays[plane][absX][absY] = (byte) 0;
+										this.getMapRegion().overlays[plane][absX][absY] = (short) 0;
 									} else {
 										if (!KeyBindings.actionValid(KeyActions.OVERLAY_ONLY_PAINT)) {
-											this.getMapRegion().overlays[plane][absX][absY] = (byte) Options.overlayPaintId
+											this.getMapRegion().overlays[plane][absX][absY] = (short) Options.overlayPaintId
 													.get();
 											this.getMapRegion().overlayShapes[plane][absX][absY] = (byte) (Options.overlayPaintShapeId
 													.get() - 1);
 											this.getMapRegion().overlayOrientations[plane][absX][absY] = (byte) Options.rotation.get();
 										} else {
 											if (this.getMapRegion().overlays[plane][absX][absY] > 0) {
-												this.getMapRegion().overlays[plane][absX][absY] = (byte) Options.overlayPaintId
+												this.getMapRegion().overlays[plane][absX][absY] = (short) Options.overlayPaintId
 														.get();
 											}
 										}
@@ -1693,7 +1693,7 @@ public class SceneGraph {
 										tileState.preserve();
 										((TileChange<UnderlayState>) currentState.get()).preserveTileState(tileState);
 									}
-									this.getMapRegion().underlays[plane][absX][absY] = (byte) Options.underlayPaintId
+									this.getMapRegion().underlays[plane][absX][absY] = (short) Options.underlayPaintId
 											.get();
 									this.tiles[plane][absX][absY].hasUpdated = true;
 								}
@@ -1842,11 +1842,36 @@ public class SceneGraph {
 
 							if (data.getGameObjectIds() != null) {
 								for (int i = 0; i < data.getGameObjectIds().length; i++) {
-
-									this.addObject(xPos, yPos, zPos, data.getGameObjectIds()[i],
+									ObjectDefinition def = ObjectDefinitionLoader.lookup(data.getGameObjectIds()[i]);
+									int width = def.getWidth();
+									int length = def.getLength();
+									if ((data.getGameObjectConfigs()[i] & 0x1) == 1) {
+										width = def.getLength();
+										length = def.getWidth();
+									}
+									int offX = 0;
+									int offY = 0;
+									switch (Options.rotation.get()) {
+										case 1:
+											offX = 1 - length;
+											break;
+										case 2:
+											offX = 1 - width;
+											offY = 1 - length;
+											break;
+										case 3:
+											offY = 1 - width;
+											break;
+									}
+									this.addObject(
+											xPos + offX,
+											yPos + offY,
+											zPos,
+											data.getGameObjectIds()[i],
 											data.getGameObjectConfigs()[i] >> 2,
-											((data.getGameObjectConfigs()[i] & 0xff) - (Options.rotation.get())) & 3, false);
-
+											(data.getGameObjectConfigs()[i] & 0xff) - Options.rotation.get() & 3,
+											false
+									);
 								}
 							}
 							if (data.getGroundDecoId() != -1) {
@@ -1901,18 +1926,46 @@ public class SceneGraph {
 							if (data.getGameObjectIds() != null) {
 								for (int i = 0; i < data.getGameObjectIds().length; i++) {
 									ObjectDefinition def = ObjectDefinitionLoader.lookup(data.getGameObjectIds()[i]);
+									int width = def.getWidth();
+									int length = def.getLength();
+									if ((data.getGameObjectConfigs()[i] & 0x1) == 1) {
+										width = def.getLength();
+										length = def.getWidth();
+									}
+									int offX = 0;
+									int offY = 0;
+									switch (Options.rotation.get()) {
+										case 1:
+											offX = 1 - length;
+											break;
+										case 2:
+											offX = 1 - width;
+											offY = 1 - length;
+											break;
+										case 3:
+											offY = 1 - width;
+											break;
+									}
 									if (def.getWidth() > 1 || def.getLength() > 1) {
-
-										this.addObject(rotatedXPos, rotatedYPos, zPos, data.getGameObjectIds()[i],
+										this.addObject(
+												rotatedXPos + offX,
+												rotatedYPos + offY,
+												zPos,
+												data.getGameObjectIds()[i],
 												data.getGameObjectConfigs()[i] >> 2,
-												(data.getGameObjectConfigs()[i] & 0xff) - Options.rotation.get() & 3, true);
-
+												(data.getGameObjectConfigs()[i] & 0xff) - Options.rotation.get() & 3,
+												true
+										);
 									} else {
-
-										this.addObject(rotatedXPos, rotatedYPos, zPos, data.getGameObjectIds()[i],
+										this.addObject(
+												rotatedXPos,
+												rotatedYPos,
+												zPos,
+												data.getGameObjectIds()[i],
 												data.getGameObjectConfigs()[i] >> 2,
-												(data.getGameObjectConfigs()[i] & 0xff) - Options.rotation.get() & 3, true);
-
+												(data.getGameObjectConfigs()[i] & 0xff) - Options.rotation.get() & 3,
+												true
+										);
 									}
 								}
 							}
@@ -2035,17 +2088,14 @@ public class SceneGraph {
 
 							},
 							(absX, absY) -> {
-							//	if(Options.brushSize.get() == 1 || absX == hoveredTileX - Options.brushSize.get() && absY == hoveredTileY - Options.brushSize.get()){
-							//		this.addTemporaryTile(plane, absX, absY, 3, 3, -1, GameRasterizer.getInstance().getFuchsia(), 62000);
-							//	}
+								//	if(Options.brushSize.get() == 1 || absX == hoveredTileX - Options.brushSize.get() && absY == hoveredTileY - Options.brushSize.get()){
+								//		this.addTemporaryTile(plane, absX, absY, 3, 3, -1, GameRasterizer.getInstance().getFuchsia(), 62000);
+								//	}
 							}, null);
 
 					if (!ctrlDown && Config.HEIGHT_SMOOTHING) {
 						brushSize -= 1;
 					}
-
-
-					getMapRegion().setHeights();//For beyond edge updates
 
 					if (!mouseIsDown && mouseWasDown) {
 						tileQueue.clear();
@@ -2068,6 +2118,158 @@ public class SceneGraph {
 		}
 	}
 
+	/**
+	 * Calculates the lowest plane in any given List of SceneTileData
+	 * @param sceneGraphData
+	 * @return
+	 */
+	private int getLowestPlane(List<SceneTileData> sceneGraphData) {
+		int lowestPlane = 4;
+		for (SceneTileData data : sceneGraphData)
+			if (data.getZ() < lowestPlane)
+				lowestPlane = data.getZ();
+
+		return lowestPlane;
+	}
+
+	/**
+	 * Function to place a List of SceneTileData at a specified location on the current map
+	 *
+	 * @param tileX
+	 * @param tileY
+	 * @param plane
+	 * @param sceneGraphData
+	 */
+	public void placeSceneTileData(int tileX, int tileY, int plane, List<SceneTileData> sceneGraphData) {
+		int lowestPlane = this.getLowestPlane(sceneGraphData);
+
+		Function<Location, Optional<SceneTileData>> getTileAt = (loc) -> {
+			return sceneGraphData.stream().filter(data -> data.getLocation().equals(loc)).findFirst();
+		};
+
+		for (SceneTileData data : sceneGraphData) {
+			int savedX = tileX + data.getX();
+			int savedY = tileY + data.getY();
+			int zPos = Options.currentHeight.get() + (data.getZ() - lowestPlane);
+			if (zPos >= 4) continue;
+
+			int angle = 90 * Options.rotation.get();
+			Point2D result = new Point2D.Double();
+			AffineTransform rotation = new AffineTransform();
+			double angleInRadians = angle * Math.PI / 180;
+			rotation.rotate(angleInRadians, tileX, tileY);
+			rotation.transform(new Point2D.Double(savedX, savedY), result);
+			int xPos = (int) result.getX();
+
+			int yPos = (int) result.getY();
+
+			if (xPos > width - 1 || xPos < 0 || yPos > length - 1 || yPos < 0) {
+				continue;
+			}
+			if (tiles[zPos][xPos][yPos] == null) {
+				tiles[zPos][xPos][yPos] = new SceneTile(xPos, yPos, zPos);
+			}
+
+			tiles[zPos][xPos][yPos].hasUpdated = true;
+			if (currentState.isPresent()) {
+				ImportTileState tileState = new ImportTileState(xPos, yPos, plane);
+				tileState.preserve();
+				((ImportChange) currentState.get()).preserveTileState(tileState);
+			}
+
+			if (data.getOverlayId() != -1) {
+				getMapRegion().overlays[zPos][xPos][yPos] = data.getOverlayId();
+				getMapRegion().overlayShapes[zPos][xPos][yPos] = data.getOverlayType();
+				getMapRegion().overlayOrientations[zPos][xPos][yPos] = (byte) ((data.getOverlayOrientation()
+						- Options.rotation.get()) & 3);
+			}
+
+			if (data.getUnderlayId() != -1) {
+				getMapRegion().underlays[zPos][xPos][yPos] = data.getUnderlayId();
+			}
+			if (data.getTileHeight() != -1) {
+				if (zPos == data.getZ()) {
+					getMapRegion().tileHeights[zPos][xPos][yPos] = data.getTileHeight();
+				} else if (data.getZ() <= 0) {
+					getMapRegion().tileHeights[zPos][xPos][yPos] = getMapRegion().tileHeights[zPos - 1][xPos][yPos] + data.getTileHeight();
+				} else {
+					Optional<SceneTileData> optionalData = getTileAt.apply(new Location(xPos, yPos, data.getZ() - 1));
+
+					optionalData.ifPresent(originalDataBelow -> {
+						getMapRegion().tileHeights[zPos][xPos][yPos] = originalDataBelow.getTileHeight() - data.getTileHeight();
+					});
+				}
+
+				getMapRegion().manualTileHeight[zPos][xPos][yPos] = 1;
+
+			}
+			if (data.getTileFlag() != -1) {
+				getMapRegion().tileFlags[zPos][xPos][yPos] = data.getTileFlag();
+			}
+
+		}
+
+		commitChanges();
+		tileQueue.clear();
+		getMapRegion().updateTiles();
+		//Then spawn the objects
+		Options.currentTool.set(ToolType.SPAWN_OBJECT);
+		this.initChanges();
+		for (SceneTileData data : sceneGraphData) {
+			int savedX = tileX + data.getX();
+			int savedY = tileY + data.getY();
+			int zPos = Options.currentHeight.get() + (data.getZ() - lowestPlane);
+			if (zPos >= 4) continue;
+
+			boolean heightDifferent = data.getZ() != Options.currentHeight.get();
+			int angle = 90 * (Options.rotation.get() & 3);
+			Point2D result = new Point2D.Double();
+			AffineTransform rotation = new AffineTransform();
+			double angleInRadians = angle * Math.PI / 180;
+			rotation.rotate(angleInRadians, tileX, tileY);
+			rotation.transform(new Point2D.Double(savedX, savedY), result);
+			int xPos = (int) result.getX();
+
+			int yPos = (int) result.getY();
+			if (xPos > width - 1 || xPos < 0 || yPos > length - 1 || yPos < 0) {
+				continue;
+			}
+			if (tiles[zPos][xPos][yPos] == null) {
+				tiles[zPos][xPos][yPos] = new SceneTile(xPos, yPos, zPos);
+			}
+			tiles[zPos][xPos][yPos].hasUpdated = true;
+
+
+			if (data.getGameObjectIds() != null) {
+				for (int i = 0; i < data.getGameObjectIds().length; i++) {
+
+					this.addObject(xPos, yPos, zPos, data.getGameObjectIds()[i],
+							data.getGameObjectConfigs()[i] >> 2,
+							((data.getGameObjectConfigs()[i] & 0xff) - (Options.rotation.get())) & 3, false);
+
+				}
+			}
+			if (data.getGroundDecoId() != -1) {
+
+				this.addObject(xPos, yPos, zPos, data.getGroundDecoId(), data.getGroundDecoConfig() >> 2,
+						((data.getGroundDecoConfig() & 0xff) - (Options.rotation.get())) & 3, false);
+			}
+			if (data.getWallId() != -1) {
+				this.addObject(xPos, yPos, zPos, data.getWallId(), data.getWallConfig() >> 2,
+						((data.getWallConfig() & 0xff) - (Options.rotation.get())) & 3, false);
+			}
+			if (data.getWallDecoId() != -1) {
+				this.addObject(xPos, yPos, zPos, data.getWallDecoId(), data.getWallDecoConfig() >> 2,
+						((data.getWallDecoConfig() & 0xff) - (Options.rotation.get())) & 3, false);
+			}
+
+		}
+		commitChanges();
+		Options.currentTool.set(ToolType.IMPORT_SELECTION);
+		SceneGraph.setMouseIsDown(false);
+		this.shadeObjects(64, -50, -10, -50, 768);
+
+	}
 	public void brushSelection(double brushSize, boolean doHighlight, BiConsumer<Integer, Integer> onMouseDown, BiConsumer<Integer, Integer> onHighlight, Runnable onEnd) {
 		int tileX = hoveredTileX;
 		int tileY = hoveredTileY;
@@ -2257,6 +2459,12 @@ public class SceneGraph {
 
 	}
 
+	public LinkedList<SceneTileData> readJMAP(File file) throws IOException {
+		ObjectMapper mapper = JsonUtil.getDefaultMapper();
+		return mapper.readValue(file, new TypeReference<LinkedList<SceneTileData>>() {
+		});
+	}
+
 	public void transformInput() {
 
 	}
@@ -2290,28 +2498,28 @@ public class SceneGraph {
 	private void mergeNormals(Mesh first, Mesh second, int dx, int dy, int dz, boolean flag) {
 		anInt488++;
 		int count = 0;
-		int[] secondX = second.verticesX;
-		int secondVertices = second.numVertices;
+		int[] secondX = second.vertexX;
+		int secondVertices = second.vertexCount;
 
-		for (int vertexA = 0; vertexA < first.numVertices; vertexA++) {
+		for (int vertexA = 0; vertexA < first.vertexCount; vertexA++) {
 			VertexNormal parentNormalA = first.getNormal(vertexA);
 			VertexNormal normalA = first.normals[vertexA];
 
 			if (normalA.getMagnitude() != 0) {
-				int y = first.verticesY[vertexA] - dy;
+				int y = first.vertexY[vertexA] - dy;
 				if (y <= second.minimumY) {
-					int x = first.verticesX[vertexA] - dx;
+					int x = first.vertexX[vertexA] - dx;
 
 					if (x >= second.minimumX && x <= second.maximumX) {
-						int z = first.verticesZ[vertexA] - dz;
+						int z = first.vertexZ[vertexA] - dz;
 
 						if (z >= second.minimumZ && z <= second.maximumZ) {
 							for (int vertexB = 0; vertexB < secondVertices; vertexB++) {
 								VertexNormal parentNormalB = second.getNormal(vertexB);
 								VertexNormal normalB = second.normals[vertexB];
 
-								if (x == secondX[vertexB] && z == second.verticesZ[vertexB]
-										&& y == second.verticesY[vertexB] && normalB.getMagnitude() != 0) {
+								if (x == secondX[vertexB] && z == second.vertexZ[vertexB]
+										&& y == second.vertexY[vertexB] && normalB.getMagnitude() != 0) {
 									parentNormalA.setX(parentNormalA.getX() + normalB.getX());
 									parentNormalA.setY(parentNormalA.getY() + normalB.getY());
 									parentNormalA.setZ(parentNormalA.getZ() + normalB.getZ());
@@ -2336,17 +2544,17 @@ public class SceneGraph {
 		if (count < 3 || !flag)
 			return;
 
-		for (int k1 = 0; k1 < first.numFaces; k1++) {
-			if (anIntArray486[first.faceIndicesA[k1]] == anInt488 && anIntArray486[first.faceIndicesB[k1]] == anInt488
-					&& anIntArray486[first.faceIndicesC[k1]] == anInt488) {
-				first.faceTypes[k1] = -1;
+		for (int k1 = 0; k1 < first.triangleCount; k1++) {
+			if (anIntArray486[first.faceIndices1[k1]] == anInt488 && anIntArray486[first.faceIndices2[k1]] == anInt488
+					&& anIntArray486[first.faceIndices3[k1]] == anInt488) {
+				first.triangleInfo[k1] = -1;
 			}
 		}
 
-		for (int l1 = 0; l1 < second.numFaces; l1++) {
-			if (anIntArray487[second.faceIndicesA[l1]] == anInt488 && anIntArray487[second.faceIndicesB[l1]] == anInt488
-					&& anIntArray487[second.faceIndicesC[l1]] == anInt488) {
-				second.faceTypes[l1] = -1;
+		for (int l1 = 0; l1 < second.triangleCount; l1++) {
+			if (anIntArray487[second.faceIndices1[l1]] == anInt488 && anIntArray487[second.faceIndices2[l1]] == anInt488
+					&& anIntArray487[second.faceIndices3[l1]] == anInt488) {
+				second.triangleInfo[l1] = -1;
 			}
 		}
 	}
@@ -2773,7 +2981,7 @@ public class SceneGraph {
 			if (Options.showUnderlayNumbers.get()) {
 				if (activeTile != null) {
 					try {
-						int underlayId = getMapRegion().underlays[activeTile.plane][activeTile.positionX][activeTile.positionY] - 1;
+						int underlayId = getMapRegion().underlays[activeTile.plane][activeTile.positionX][activeTile.positionY];
 						if (underlayId > 0 && screenPos.getX() > 0 && screenPos.getY() > 0)
 							Client.getSingleton().robotoFont.drawString("" + underlayId, (int) screenPos.getX(), (int) screenPos.getY(), 0xffff00);
 					} catch (Exception e) {
@@ -2783,7 +2991,7 @@ public class SceneGraph {
 			if (Options.showOverlayNumbers.get()) {
 				if (activeTile != null) {
 					try {
-						int overlayId = getMapRegion().overlays[activeTile.plane][activeTile.positionX][activeTile.positionY] - 1;
+						int overlayId = getMapRegion().overlays[activeTile.plane][activeTile.positionX][activeTile.positionY];
 						if (overlayId > 0 && screenPos.getX() > 0 && screenPos.getY() > 0)
 							Client.getSingleton().robotoFont.drawString("" + overlayId, (int) screenPos.getX(), (int) screenPos.getY(), 0xffff00);
 					} catch (Exception e) {
@@ -3277,7 +3485,7 @@ public class SceneGraph {
 	}
 
 	public void renderPlainTileNoMouse(SimpleTile tile, int plane, int ySin, int yCos, int xSin, int xCos, int tileX,
-	                                   int tileY, boolean hiddenTile, boolean highlighted, boolean tileSelected, boolean tileBeingSelected, byte flag) {
+									   int tileY, boolean hiddenTile, boolean highlighted, boolean tileSelected, boolean tileBeingSelected, byte flag) {
 		int xC;
 		int xA = xC = (tileX << 7) - xCameraTile;
 		int yB;
@@ -3438,7 +3646,7 @@ public class SceneGraph {
 	}
 
 	public void renderPlainTile(SimpleTile tile, int plane, int ySin, int yCos, int xSin, int xCos, int tileX,
-	                            int tileY, boolean hiddenTile, boolean highlighted, boolean tileSelected, boolean tileBeingSelected, byte flag) {
+								int tileY, boolean hiddenTile, boolean highlighted, boolean tileSelected, boolean tileBeingSelected, byte flag) {
 		int xC;
 		int xA = xC = (tileX << 7) - xCameraTile;
 		int yB;
@@ -3630,7 +3838,7 @@ public class SceneGraph {
 	}
 
 	public void renderShapedTile(int tileX, int ySin, int xSin, ShapedTile tile, int yCos, int tileY, int xCos,
-	                             int plane, boolean highlight, boolean tileSelected, boolean tileBeingSelected, byte flag) {
+								 int plane, boolean highlight, boolean tileSelected, boolean tileBeingSelected, byte flag) {
 
 		//Renders a tile in 2 triangle halves.
 
@@ -3906,11 +4114,12 @@ public class SceneGraph {
 					flag1 = true;
 					renderShapedTile(x, ySine, xSine, activeTile.shape, yCosine, y, xCosine, l,
 							activeTile.simple == null && activeTile.tileHighlighted, activeTile.tileSelected, activeTile.tileBeingSelected, activeTile.tileFlags);
-				} else if (plane == Options.currentHeight.get() && Options.showHiddenTiles.get() &&
+				} else if (plane == Options.currentHeight.get() &&
 						activeTile.shape == null && activeTile.simple == null &&
 						!activeTile.temporaryShapedTile.isPresent() && !activeTile.temporarySimpleTile.isPresent()) {
-					SimpleTile hiddenTile = TileUtils.HIDDEN_TILE;
-					this.renderPlainTile(hiddenTile, plane, ySine, yCosine, xSine, xCosine, x, y, true,
+					boolean drawHiddenTile = Options.showHiddenTiles.get();
+					SimpleTile hiddenTile = drawHiddenTile ? TileUtils.HIDDEN_TILE : TileUtils.PICKABLE_HIDDEN_TILE;
+					this.renderPlainTile(hiddenTile, plane, ySine, yCosine, xSine, xCosine, x, y, drawHiddenTile,
 							activeTile.tileHighlighted, activeTile.tileSelected, activeTile.tileBeingSelected, getMapRegion().tileFlags[plane][x][y]);
 				}
 
@@ -4491,7 +4700,8 @@ public class SceneGraph {
 					if (tile != null) {
 						for (GameObject object : tile.gameObjects)
 							if (object != null) {
-								objs.add(object);
+								if(object.getX() == x && object.getY() == y)
+									objs.add(object);
 							}
 						if (tile.groundDecoration != null) {
 							objs.add(tile.groundDecoration);
@@ -4550,6 +4760,7 @@ public class SceneGraph {
 
 		return data;
 	}
+
 
 	public boolean sceneVisible(int cameraX, int cameraY) {
 		cameraX /= 128;
@@ -4706,7 +4917,7 @@ public class SceneGraph {
 		this.offsetY = chunk.offsetY;
 	}
 
-	public byte getSelectedUnderlay() {
+	public short getSelectedUnderlay() {
 		int plane = Options.currentHeight.get();
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < length; y++) {
@@ -4722,7 +4933,7 @@ public class SceneGraph {
 		return -1;
 	}
 
-	public byte getSelectedOverlay() {
+	public short getSelectedOverlay() {
 		int plane = Options.currentHeight.get();
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < length; y++) {
@@ -4805,6 +5016,9 @@ public class SceneGraph {
 		setTileHeights(getSelectedTiles(), false);
 	}
 
+	/**
+	 *
+	 */
 	public void setSelectedUnderlays() {
 		setTileUnderlays(getSelectedTiles());
 	}
@@ -4852,8 +5066,6 @@ public class SceneGraph {
 
 		});
 
-		getMapRegion().setHeights();//For beyond edge updates
-
 		tileQueue.clear();
 		this.shadeObjects(64, -50, -10, -50, 768);
 		getMapRegion().updateTiles();
@@ -4879,7 +5091,7 @@ public class SceneGraph {
 				tileState.preserve();
 				((TileChange<UnderlayState>) currentState.get()).preserveTileState(tileState);
 			}
-			this.getMapRegion().underlays[plane][x][y] = (byte) Options.underlayPaintId.get();
+			this.getMapRegion().underlays[plane][x][y] = (short) Options.underlayPaintId.get();
 			this.tiles[plane][x][y].hasUpdated = true;
 
 		});
@@ -4891,6 +5103,10 @@ public class SceneGraph {
 	}
 
 	public void setTileOverlays(List<SceneTile> tiles) {
+		this.setTileOverlays(tiles, 1);
+	}
+
+	public void setTileOverlays(List<SceneTile> tiles, int heightLevels) {
 		ToolType currentTool = Options.currentTool.get();
 		Options.currentTool.set(ToolType.PAINT_OVERLAY);
 		if (!this.currentStateCorrect()) {
@@ -4907,9 +5123,9 @@ public class SceneGraph {
 				((TileChange<OverlayState>) currentState.get()).preserveTileState(tileState);
 			}
 			if (Options.overlayPaintShapeId.get() == 0) {
-				this.getMapRegion().overlays[plane][x][y] = (byte) 0;
+				this.getMapRegion().overlays[plane][x][y] = (short) 0;
 			} else {
-				this.getMapRegion().overlays[plane][x][y] = (byte) Options.overlayPaintId
+				this.getMapRegion().overlays[plane][x][y] = (short) Options.overlayPaintId
 						.get();
 				this.getMapRegion().overlayShapes[plane][x][y] = (byte) (Options.overlayPaintShapeId
 						.get() - 1);
@@ -4968,6 +5184,14 @@ public class SceneGraph {
 
 		}
 
+	}
+
+	public int getCameraXTile() {
+		return xCameraTile;
+	}
+
+	public int getCameraYTile() {
+		return yCameraTile;
 	}
 
 	public void rotateSelectedObjects(int rotateDir) {

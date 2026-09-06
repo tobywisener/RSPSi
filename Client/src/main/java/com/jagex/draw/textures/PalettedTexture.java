@@ -9,9 +9,13 @@ public class PalettedTexture extends Texture {
 	public PalettedTexture(IndexedImage image) {
 		super(image.getWidth(), image.getHeight());
 
+		int[] imagePalette = image.getPalette();
 		for(int i = 0;i<originalPixels.length;i++) {
-			int paletteIdx = image.getImageRaster()[i];
-			originalPixels[i] = image.getPalette()[paletteIdx];
+			int paletteIdx = image.getImageRaster()[i] & 0xff;
+			if (paletteIdx < 0 || paletteIdx >= imagePalette.length) {
+				paletteIdx = 0;
+			}
+			originalPixels[i] = imagePalette[paletteIdx];
 		}
 
 		generatePalette();

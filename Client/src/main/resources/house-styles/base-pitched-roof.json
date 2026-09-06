@@ -1,0 +1,41 @@
+{
+  "id": "base_pitched_roof_settlement_v1",
+  "label": "Base Pitched Roof Settlement",
+  "coordinateModel": {
+    "basis": "interior_floor_bbox",
+    "description": "The selected tiles are treated as the floor bbox. Shell walls sit one tile outside that floor area, and the pitched roof is built on the top plane from a fixed outer eave ring plus inner roof body."
+  },
+  "constraints": {
+    "minInteriorWidth": 4,
+    "minInteriorHeight": 4,
+    "maxFloors": 2,
+    "supportsRectangularOnly": true,
+    "roofKind": "pitched"
+  },
+  "proceduralRecipe": {
+    "kind": "pitched_rectangular",
+    "tieredFlooring": false,
+    "footprints": {
+      "allowedShapes": ["RECT"],
+      "rectWeight": 1,
+      "lWeight": 0,
+      "uWeight": 0,
+      "minWingWidth": 3,
+      "minWingDepth": 3,
+      "minCourtyardWidth": 3,
+      "minCourtyardDepth": 3
+    },
+    "groundFloor": {
+      "overlayShape": 1,
+      "tileFlag": 4
+    },
+    "village": {
+      "path": {
+        "overlayShape": 1
+      },
+      "centrepiece": {
+        "overlayShape": 1
+      }
+    }
+  }
+}

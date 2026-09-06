@@ -3,7 +3,9 @@ package com.rspsi.controllers;
 import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
 
+import com.rspsi.tools.BuildingStyle;
 import com.jfoenix.controls.JFXButton;
+import com.rspsi.tools.BuildingGenerator;
 import com.rspsi.util.Settings;
 import javafx.scene.control.*;
 import org.major.map.RenderFlags;
@@ -25,6 +27,9 @@ import com.rspsi.tools.BridgeBuilder;
 import com.rspsi.util.AlwaysSelectToggleGroup;
 import com.rspsi.util.ChangeListenerUtil;
 import com.rspsi.util.FXDialogs;
+import com.rspsi.util.OSUtil;
+import com.rspsi.tools.SettlementPieceDetector;
+import com.rspsi.tools.SettlementPiecePlacer;
 
 import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
@@ -82,6 +87,12 @@ public class MainController {
 
 	@FXML
 	private MenuItem newMapButton;
+
+	@FXML
+	private MenuItem openCacheMenuItem;
+
+	@FXML
+	private MenuItem mineBiomeProfilesMenuItem;
 
 	@FXML
 	private Menu openRecentMenu;
@@ -355,10 +366,52 @@ public class MainController {
 
 	@FXML
 	private MenuItem setRelativeHeight;
-	
+
 	@FXML
 	private MenuItem generateBridgeBtn;
-	
+
+	@FXML
+	private MenuItem generateBuildingBtn;
+
+	@FXML
+	private MenuItem generateBuildingBtn2;
+
+	@FXML
+	private MenuItem generateBuildingBtn3;
+
+	@FXML
+	private MenuItem generateBuildingBtn4;
+
+	@FXML
+	private JFXButton detectSettlementPieceBtn;
+
+	@FXML
+	private TextArea settlementPieceJsonArea;
+
+	@FXML
+	private JFXButton insertSettlementPieceBtn;
+
+	@FXML
+	private RadioMenuItem generateBuildingStyleVarrock;
+
+	@FXML
+	private RadioMenuItem generateBuildingStyleNormal;
+
+	@FXML
+	private RadioMenuItem generateBuildingStyleBarbarian;
+
+	@FXML
+	private RadioMenuItem generateBuildingStyleCanafis;
+
+	@FXML
+	private RadioMenuItem generateBuildingStyleFalador;
+
+	@FXML
+	private RadioMenuItem generateBuildingStyleYanille;
+
+	@FXML
+	private RadioMenuItem generateBuildingStylePollnivneach;
+
 	@FXML
 	private VBox root;
 	
@@ -428,27 +481,35 @@ public class MainController {
 
 				AlwaysSelectToggleGroup.setup(tg);
 				ToggleButton[] shapeButtons = new ToggleButton[13];
-				for (int type = 0; type < 13; type++) {
-					Pane g = Testing.generateImage(type);
-					ToggleButton btn = new ToggleButton();
-					shapeButtons[type] = btn;
-					tg.getProperties().put(type, btn);
+					for (int type = 0; type < 13; type++) {
+						Pane g = Testing.generateImage(type);
+						ToggleButton btn = new ToggleButton();
+						shapeButtons[type] = btn;
+						tg.getProperties().put(type, btn);
 					btn.setAlignment(Pos.CENTER);
 					btn.setMaxSize(36, 36);
 					btn.setPrefSize(36, 36);
 					btn.setMinSize(36, 36);
 					btn.setToggleGroup(tg);
 					btn.setGraphic(g);
-					btn.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-					final int shapeType = type;
-					btn.setOnAction(evt -> {
+						btn.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+						final int shapeType = type;
+						btn.setOnAction(evt -> {
 
-						Options.overlayPaintShapeId.set(shapeType);
-					});
-					flowPane.getChildren().add(btn);
-					if (type == 1) {
-						btn.setSelected(true);
-					}
+							Options.overlayPaintShapeId.set(shapeType);
+						});
+						Label shapeInfo = new Label("Displayed shape ID: " + shapeType + " | Stored tile shape: " + Math.max(0, shapeType - 1));
+						CustomMenuItem shapeInfoItem = new CustomMenuItem(shapeInfo, false);
+						ContextMenu contextMenu = new ContextMenu(shapeInfoItem);
+						btn.setOnContextMenuRequested(evt -> {
+							shapeInfo.setText("Displayed shape ID: " + shapeType + " | Stored tile shape: " + Math.max(0, shapeType - 1));
+							contextMenu.show(btn, evt.getScreenX(), evt.getScreenY());
+							evt.consume();
+						});
+						flowPane.getChildren().add(btn);
+						if (type == 1) {
+							btn.setSelected(true);
+						}
 
 				}
 				flowPane.setAlignment(Pos.CENTER);
@@ -483,7 +544,12 @@ public class MainController {
 				Options.tileHeightLevel);
 
 		currentHeightSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3, 0));
-		windowControls = WindowControls.addWindowControls(application.getStage(), grabBar, controlBox);
+		if (!OSUtil.isMac()) {
+			windowControls = WindowControls.addWindowControls(application.getStage(), grabBar, controlBox);
+		} else {
+			controlBox.setManaged(false);
+			controlBox.setVisible(false);
+		}
 
 		// windowControls.getResizeHelper().setMinWidth(1240);
 		objectSelectionType.getItems().add("ALL");
@@ -625,9 +691,64 @@ public class MainController {
 		
 		generateBridgeBtn.setOnAction(evt -> {
 			try {
+				SceneGraph.setMouseIsDown(false);
 				BridgeBuilder.buildBridge();
 			} catch (Exception e) {
 				FXDialogs.showError(application.getStage().getOwner(),"Error while generating bridge!", "Message: " + e.getMessage());
+			}
+		});
+
+		initialiseBuildingStyleMenu();
+
+		generateBuildingBtn.setOnAction(evt -> {
+			try {
+				BuildingGenerator.generateBuilding(1);
+			} catch (Exception e) {
+				FXDialogs.showError(application.getStage().getOwner(),"Error while generating building!", "Message: " + e.getMessage());
+			}
+		});
+
+		generateBuildingBtn2.setOnAction(evt -> {
+			try {
+				BuildingGenerator.generateBuilding(2);
+			} catch (Exception e) {
+				FXDialogs.showError(application.getStage().getOwner(),"Error while generating building!", "Message: " + e.getMessage());
+			}
+		});
+
+		generateBuildingBtn3.setOnAction(evt -> {
+			try {
+				BuildingGenerator.generateBuilding(3);
+			} catch (Exception e) {
+				FXDialogs.showError(application.getStage().getOwner(),"Error while generating building 3!", "Message: " + e.getMessage());
+			}
+		});
+
+		generateBuildingBtn4.setOnAction(evt -> {
+			try {
+				BuildingGenerator.generateBuilding(4);
+			} catch (Exception e) {
+				FXDialogs.showError(application.getStage().getOwner(),"Error while generating building 4!", "Message: " + e.getMessage());
+			}
+		});
+
+		detectSettlementPieceBtn.setOnAction(evt -> {
+			try {
+				String json = SettlementPieceDetector.detectSelectedSettlementPieceJson();
+				if (settlementPieceJsonArea != null) {
+					settlementPieceJsonArea.setText(json);
+				}
+				System.out.println(json);
+			} catch (Exception e) {
+				FXDialogs.showError(application.getStage().getOwner(),"Error while detecting SettlementPiece!", "Message: " + e.getMessage());
+			}
+		});
+
+		insertSettlementPieceBtn.setOnAction(evt -> {
+			try {
+				SettlementPiecePlacer.insertFromJson(settlementPieceJsonArea == null ? null : settlementPieceJsonArea.getText());
+			} catch (Exception e) {
+				FXDialogs.showError(application.getStage().getOwner(),"Error while inserting SettlementPiece!", "Message: " + e.getMessage());
 			}
 		});
 
@@ -679,6 +800,39 @@ public class MainController {
 				evt -> SceneGraph.onCycleEnd.add(() -> Client.getSingleton().sceneGraph.setSelectedUnderlays()));
 
 
+	}
+
+	private void initialiseBuildingStyleMenu() {
+		ToggleGroup buildingStyleGroup = new ToggleGroup();
+		configureBuildingStyle(generateBuildingStyleVarrock, buildingStyleGroup, BuildingStyle.VARROCK);
+		configureBuildingStyle(generateBuildingStyleNormal, buildingStyleGroup, BuildingStyle.NORMAL);
+		configureBuildingStyle(generateBuildingStyleBarbarian, buildingStyleGroup, BuildingStyle.BARBARIAN);
+		configureBuildingStyle(generateBuildingStyleCanafis, buildingStyleGroup, BuildingStyle.CANAFIS);
+		configureBuildingStyle(generateBuildingStyleFalador, buildingStyleGroup, BuildingStyle.FALADOR);
+		configureBuildingStyle(generateBuildingStyleYanille, buildingStyleGroup, BuildingStyle.YANILLE);
+		configureBuildingStyle(generateBuildingStylePollnivneach, buildingStyleGroup, BuildingStyle.POLLNIVNEACH);
+
+		BuildingStyle activeStyle = BuildingGenerator.getSelectedStyle();
+		if (activeStyle == BuildingStyle.NORMAL) {
+			generateBuildingStyleNormal.setSelected(true);
+		} else if (activeStyle == BuildingStyle.BARBARIAN) {
+			generateBuildingStyleBarbarian.setSelected(true);
+		} else if (activeStyle == BuildingStyle.CANAFIS) {
+			generateBuildingStyleCanafis.setSelected(true);
+		} else if (activeStyle == BuildingStyle.FALADOR) {
+			generateBuildingStyleFalador.setSelected(true);
+		} else if (activeStyle == BuildingStyle.YANILLE) {
+			generateBuildingStyleYanille.setSelected(true);
+		} else if (activeStyle == BuildingStyle.POLLNIVNEACH) {
+			generateBuildingStylePollnivneach.setSelected(true);
+		} else {
+			generateBuildingStyleVarrock.setSelected(true);
+		}
+	}
+
+	private void configureBuildingStyle(RadioMenuItem menuItem, ToggleGroup toggleGroup, BuildingStyle style) {
+		menuItem.setToggleGroup(toggleGroup);
+		menuItem.setOnAction(evt -> BuildingGenerator.setSelectedStyle(style));
 	}
 
 	private void deselectTools() {

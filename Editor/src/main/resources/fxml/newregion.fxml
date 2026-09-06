@@ -14,59 +14,23 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.canvas.Canvas?>
 <VBox alignment="TOP_CENTER" stylesheets="@../css/modena_dark.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox>
          <children>
-            <TitledPane animated="false" expanded="false" text="Overlay/Underlay (DISABLED WIP)">
+            <TitledPane animated="false" expanded="false" text="Biome Selection">
                <content>
                   <VBox alignment="CENTER">
                      <children>
-                        <VBox fx:id="overlayUnderlayBox" alignment="CENTER" spacing="7.0">
+                        <VBox fx:id="biomeSelectionBox" alignment="CENTER" spacing="7.0">
                            <children>
-                              <GridPane alignment="CENTER" gridLinesVisible="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
-                                 <columnConstraints>
-                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" prefWidth="208.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" prefWidth="70.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" prefWidth="70.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="35.0" />
-                                 </columnConstraints>
-                                 <rowConstraints>
-                                    <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-                                 </rowConstraints>
-                                 <children>
-                                    <HBox alignment="CENTER" fillHeight="false" spacing="5.0" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
-                                       <children>
-                                          <Label text="Condition" />
-                                       </children>
-                                    </HBox>
-                                    <HBox fx:id="overlayBox" GridPane.columnIndex="1">
-                                       <children>
-                                          <HBox alignment="CENTER" HBox.hgrow="ALWAYS">
-                                             <children>
-                                                <Label text="Overlay" />
-                                             </children>
-                                          </HBox>
-                                       </children>
-                                    </HBox>
-                                    <HBox fx:id="underlayBox" GridPane.columnIndex="2">
-                                       <children>
-                                          <HBox alignment="CENTER" HBox.hgrow="ALWAYS">
-                                             <children>
-                                                <Label text="Underlay" />
-                                             </children>
-                                          </HBox>
-                                       </children>
-                                    </HBox>
-                                    <HBox alignment="CENTER" fillHeight="false" layoutX="15.0" layoutY="15.0" spacing="5.0" GridPane.columnIndex="3" />
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </padding>
-                              </GridPane>
+                              <HBox>
+                              </HBox>
                            </children>
                         </VBox>
-                        <Button fx:id="addConditionBtn" mnemonicParsing="false" text="Add condition" />
                      </children>
                   </VBox>
                </content>
@@ -75,7 +39,12 @@
                <content>
                   <VBox alignment="CENTER" spacing="5.0">
                      <children>
-                        <ImageView fx:id="tileHeightImageView" fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" />
+                        <HBox alignment="CENTER" layoutX="20.0" layoutY="111.0" spacing="2.0">
+                           <children>
+                              <Canvas fx:id="tileHeightCanvas" height="64.0" width="64.0" />
+                              <Canvas fx:id="tileHeightCanvas2" height="64.0" width="64.0" />
+                           </children>
+                        </HBox>
                         <Label layoutX="131.0" layoutY="119.0" text="Water Distance" />
                         <HBox alignment="CENTER" layoutX="20.0" layoutY="111.0" spacing="2.0">
                            <children>
@@ -101,6 +70,47 @@
                               </Label>
                               <Spinner fx:id="heightsMax" prefWidth="100.0" />
                            </children>
+                        </HBox>
+                        <Label text="Mapping" />
+                        <HBox alignment="CENTER" spacing="2.0">
+                           <children>
+                              <Label text="Freq:" />
+                              <Spinner fx:id="frequency" prefWidth="100.0" />
+                              <Label text="Peaks:">
+                                 <HBox.margin>
+                                    <Insets left="8.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <Spinner fx:id="peaksValleys" prefWidth="100.0"/>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="2.0">
+                           <children>
+                              <Label text="Seed:" />
+                              <TextField fx:id="seed" prefWidth="100.0" />
+                              <Label text="Trees:">
+                                 <HBox.margin>
+                                    <Insets left="8.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <TextField fx:id="treeFreq" prefWidth="100.0"/>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="2.0">
+                           <children>
+                              <Label text="X:" />
+                              <Spinner fx:id="xCoord" prefWidth="100.0" />
+                              <Label text="Y:">
+                                 <HBox.margin>
+                                    <Insets left="8.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <Spinner fx:id="yCoord" prefWidth="100.0"/>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="2.0">
+                           <CheckBox fx:id="preserveSeed" />
+                           <Label text="Preserve Seed" />
                         </HBox>
                         <HBox alignment="CENTER" spacing="9.0">
                            <padding>

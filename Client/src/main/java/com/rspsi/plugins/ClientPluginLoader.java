@@ -1,7 +1,6 @@
 package com.rspsi.plugins;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -19,6 +18,7 @@ public class ClientPluginLoader {
 	private static int count = 0;
 	
 	private static ServiceLoader<ClientPlugin> serviceLoader;
+	private static URLClassLoader pluginClassLoader;
 
 	private static List<String> activePlugins = Lists.newArrayList();
 	
@@ -47,19 +47,13 @@ public class ClientPluginLoader {
 			}
 		}
 		
-        URLClassLoader urlClassLoader = URLClassLoader.newInstance(urls.toArray(new URL[0]), Thread.currentThread().getContextClassLoader());
-
-        serviceLoader = ServiceLoader.load(ClientPlugin.class, urlClassLoader);
+        pluginClassLoader = URLClassLoader.newInstance(urls.toArray(new URL[0]), Thread.currentThread().getContextClassLoader());
+        serviceLoader = ServiceLoader.load(ClientPlugin.class, pluginClassLoader);
         forEach(plugin -> {
         	plugin.initializePlugin();
         	count++;
         });
         log.info("Loaded {} client plugins!", count);
-        try {
-			urlClassLoader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
         
 	}
 	

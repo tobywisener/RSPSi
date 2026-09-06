@@ -7,7 +7,6 @@ import com.jagex.cache.loader.anim.AnimationDefinitionLoader;
 import com.jagex.cache.loader.anim.GraphicLoader;
 import com.jagex.io.Buffer;
 
-
 public class GraphicLoaderOSRS extends GraphicLoader {
 
 
@@ -31,7 +30,7 @@ public class GraphicLoaderOSRS extends GraphicLoader {
 		Buffer buffer = new Buffer(archive.readFile("spotanim.dat"));
 		count = buffer.readUShort();
 		if (graphics == null) {
-			graphics = new Graphic[count + 1];
+			graphics = new Graphic[count];
 		}
 
 		for (int id = 0; id < count; id++) {
@@ -49,7 +48,7 @@ public class GraphicLoaderOSRS extends GraphicLoader {
 		Buffer buffer = new Buffer(data);
 		count = buffer.readUShort();
 		if (graphics == null) {
-			graphics = new Graphic[count + 1];
+			graphics = new Graphic[count];
 		}
 
 		for (int id = 0; id < count; id++) {
@@ -67,7 +66,6 @@ public class GraphicLoaderOSRS extends GraphicLoader {
 		int lastOpcode = -1;
 		do {
 			int opcode = buffer.readUByte();
-
 			if (opcode == 0)
 				return graphic;
 
@@ -75,12 +73,10 @@ public class GraphicLoaderOSRS extends GraphicLoader {
 				graphic.setModel(buffer.readUShort());
 			} else if (opcode == 2) {
 				int animationId = buffer.readUShort();
-
 				if (animationId >= 0) {
 					graphic.setAnimation(AnimationDefinitionLoader.getAnimation(animationId));
 				}
 				graphic.setAnimationId(animationId);
-
 			} else if (opcode == 4) {
 				graphic.setBreadthScale(buffer.readUShort());
 			} else if (opcode == 5) {

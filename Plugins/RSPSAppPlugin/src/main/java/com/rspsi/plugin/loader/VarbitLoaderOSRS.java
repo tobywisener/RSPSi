@@ -6,7 +6,6 @@ import com.jagex.cache.config.VariableBits;
 import com.jagex.cache.loader.config.VariableBitLoader;
 import com.jagex.io.Buffer;
 
-
 public class VarbitLoaderOSRS extends VariableBitLoader{
 
 	private int count;
@@ -47,17 +46,6 @@ public class VarbitLoaderOSRS extends VariableBitLoader{
 	
 	private VariableBits decode(Buffer buffer) {
 		VariableBits bit = new VariableBits();
-		int opcode = buffer.readUByte();
-
-		if (opcode == 0) {
-			return null;
-		}
-
-		if (opcode != 1) {
-			System.out.println("VarbitLoader : decode : Invalid varbit opcode: " + opcode);
-			return bit;
-		}
-
 		int setting = buffer.readUShort();
 		int low = buffer.readUByte();
 		int high = buffer.readUByte();

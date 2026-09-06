@@ -79,8 +79,7 @@ public class RenderableObject extends Renderable {
 		}
 
 		ObjectDefinition definition = ObjectDefinitionLoader.lookup(id);
-		if(definition.getMorphisms() != null)
-			definition = morph();
+
 		Mesh model = definition == null ? null
 				: definition.modelAt(type, orientation, anInt1603, centre, anInt1605, anInt1606, lastFrame);
 		if(model != null && this.selected) {
